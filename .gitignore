@@ -3,3 +3,12 @@
 
 # virtualenv
 /venv/
+
+# configuration files with private data
+/config/website_config.py
+
+# db migrations
+/migrations/
+
+# log files
+/logs/
