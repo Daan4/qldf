@@ -1,5 +1,8 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+import sys
+import os
+sys.path.insert(0, os.path.abspath('..'))
 from qldf import db, create_app
 
 # available commands
@@ -10,8 +13,8 @@ from qldf import db, create_app
 
 app = create_app('config.config')
 
-# Flask-Migrate
-migrate = Migrate(app, db)
+# setup Flask-Migrate
+migrate = Migrate(app, db, directory=os.path.abspath('..\\migrations'))
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
