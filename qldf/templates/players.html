@@ -1,4 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-    Players
+Players
+<table>
+    <tr>
+        <th>Name</th>
+        <th>World Records</th>
+        <th>Records</th>
+        <th>Steam ID</th>
+    </tr>
+{% for row in rows %}
+    <tr>
+        <td>{{ row.name }}</td>
+        <td></td>
+        <td></td>
+        <td>{{ row.steam_id }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% if pagination.has_prev %}<a href="{{ url_for('root.players', page=pagination.prev_num) }}">&lt;&lt; Previous</a>
+{% else %}&lt;&lt; Previous
+{% endif %} |
+{% if pagination.has_next %}<a href="{{ url_for('root.players', page=pagination.next_num) }}">Next &gt;&gt;</a>
+{% else %}Next &gt;&gt;
+{% endif %}
 {% endblock %}

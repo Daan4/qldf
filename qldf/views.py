@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, session, url_for, g, request
 from time import time
+from .models import Player
+from config.config import ROWS_PER_PAGE
 
-root = Blueprint('root', __name__, url_prefix='/')
-
+root = Blueprint('root', __name__, url_prefix='')
 
 
 @root.route('/')
@@ -10,27 +11,33 @@ def index():
     return render_template('index.html')
 
 
-@root.route('/servers')
+@root.route('/servers/')
 def servers():
-    pass
+    return render_template('servers.html')
 
 
-@root.route('/players')
-def players():
-    pass
+@root.route('/players/', defaults={'page': 1})
+@root.route('/players/page/<int:page>')
+def players(page):
+    player_pagination = Player.query.order_by(Player.name).paginate(page, ROWS_PER_PAGE, True)
+    player_rows = player_pagination.items
+    return render_template('players.html',
+                           title='Players',
+                           pagination=player_pagination,
+                           rows=player_rows)
 
 
-@root.route('/records')
+@root.route('/records/')
 def records():
-    pass
+    return render_template('records.html')
 
 
-@root.route('/maps')
+@root.route('/maps/')
 def maps():
-    pass
+    return render_template('maps.html')
 
 
-@root.route('/api')
+@root.route('/api/')
 def api():
     pass
 
