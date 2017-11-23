@@ -8,11 +8,11 @@ Players
         <th>Records</th>
         <th>Steam ID</th>
     </tr>
-{% for row in rows %}
+{% for row in pagination.items %}
     <tr>
         <td>{{ row.name }}</td>
         <td></td>
-        <td></td>
+        <td>{{ row.record_count }}</td>
         <td>{{ row.steam_id }}</td>
     </tr>
 {% endfor %}

@@ -1,6 +1,5 @@
 from qldf import db
 from flask import flash
-from sqlalchemy import ForeignKey
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
@@ -46,6 +45,7 @@ class Player(BaseModel):
     __tablename__ = 'player'
     name = db.Column(db.Text)
     steam_id = db.Column(db.Text)
+    records = db.relationship('Record', backref='player', lazy=True)
 
     def __repr__(self):
         return f'<Player {self.id}: {self.name} {self.steam_id}>'
@@ -54,8 +54,8 @@ class Player(BaseModel):
 class Record(BaseModel):
     __tablename__ = 'record'
     mode = db.Column(db.Integer)
-    map_id = db.Column(db.Integer, ForeignKey('map.id'))
-    player_id = db.Column(db.Integer, ForeignKey('player.id'))
+    map_id = db.Column(db.Integer, db.ForeignKey('map.id'))
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'))
     time = db.Column(db.Integer)
     match_guid = db.Column(db.Text)
     date = db.Column(db.DateTime)
@@ -69,6 +69,7 @@ class Map(BaseModel):
     name = db.Column(db.Text)
     author = db.Column(db.Text)
     workshop_url = db.Column(db.Text)
+    records = db.relationship('Record', backref='map', lazy=True)
 
     def __repr__(self):
         return f'<Map {self.id}: {self.name}>'

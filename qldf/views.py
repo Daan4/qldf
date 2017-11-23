@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, session, url_for, g, request
 from time import time
-from .models import Player
+from .models import Player, Record, Map
 from config.config import ROWS_PER_PAGE
+from sqlalchemy import func, and_
+from qldf import db
 
 root = Blueprint('root', __name__, url_prefix='')
 
@@ -19,12 +21,37 @@ def servers():
 @root.route('/players/', defaults={'page': 1})
 @root.route('/players/page/<int:page>')
 def players(page):
-    player_pagination = Player.query.order_by(Player.name).paginate(page, ROWS_PER_PAGE, True)
-    player_rows = player_pagination.items
+    # see https://stackoverflow.com/questions/6206600/sqlalchemy-subquery-in-a-where-clause
+    # t = db.session.query(Player.id,
+    #                      func.count(Player.id).label('record_count'),
+    # ).join(Player.records).group_by(Player.id).subquery('t')
+    # pagination = db.session.query(Player, Record).filter(and_(
+    #     Player.id == Record.player_id,
+    #     Player.id == t.c.id
+    # )).order_by(Player.name).paginate(page, ROWS_PER_PAGE, True)
+    # pagination = db.session.query(Player).\
+    #     outerjoin(Player.records).\
+    #     filter(Player.id == Record.player_id). \
+    #     add_column(func.count(Player.id)). \
+    #     group_by(Player.id).\
+    #     paginate(page, ROWS_PER_PAGE, True)\
+    #https://stackoverflow.com/questions/41362153/sqlalchemy-count-function-for-nested-join-subquery
+    stmt = db.session.query(
+        Player.id,
+        func.count(Record.player_id.distinct()).label('record_count')
+    ).join(Record).\
+        group_by(Player.id).\
+        subquery()
+
+    print(str(db.session.query(Player,
+                                  stmt.c.record_count).\
+        outerjoin(stmt, Player.id == stmt.c.id).\
+        order_by(Player.name).paginate(page, ROWS_PER_PAGE,True))
+
+
     return render_template('players.html',
                            title='Players',
-                           pagination=player_pagination,
-                           rows=player_rows)
+                           pagination=pagination)
 
 
 @root.route('/records/')
