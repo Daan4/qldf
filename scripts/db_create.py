@@ -5,4 +5,6 @@ from qldf import db, create_app
 
 app = create_app('config.config')
 with app.app_context():
+    from qldf.models import Map, Player, Record
     db.create_all()
+    db.session.commit()
