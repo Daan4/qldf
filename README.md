@@ -5,7 +5,10 @@ This readme file is a work in progress...
 
 Run from project folder:
 ```
-virtualenv --no-site-packages -distribute .env && source .env/bin/activate && pip install -r requirements.txt
+python -m pip install --user virtualenv
+python -m virtualenv venv
+venv\scripts\activate
+pip install -r requirements.txt
 ```
 
 2. Download and install postgres v10.1, then create the qldf database.
