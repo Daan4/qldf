@@ -8,7 +8,7 @@ response = ''
 while response.lower() not in ('y', 'n'):
     response = input('Are you sure you want to drop all database tables? y/n\n')
 if response.lower() == 'y':
-    app = create_app('config.config', create_logfilesg=False)
+    app = create_app('config.config', create_logfiles=False)
     with app.app_context():
         from qldf.models import Map, Player, Record
         db.reflect()
