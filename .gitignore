@@ -13,3 +13,6 @@ migrations/*
 
 # log files
 logs/
+
+# script temporary files
+scripts/tmp/
