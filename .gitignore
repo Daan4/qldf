@@ -8,8 +8,7 @@ venv/
 config/website_config.py
 
 # db migrations, except the configuration file
-migrations/*
-!migrations/alembic.ini
+migrations/
 
 # log files
 logs/
