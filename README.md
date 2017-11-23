@@ -17,17 +17,17 @@ createdb -U postgres -T template0 -E utf-8 -l american_usa qldf
 
 3. Create database tables.
 
-Run from virtualenv:
+Run from \scripts in the virtualenv:
 ```
-scripts\db_create
+db_create
 ```
 
 4. Setup database migration.
 
-Run from virtualenv:
+Run from \scripts in the virtualenv:
 ```
-scripts\db_manage db init
-scripts\db_manage db migrate
+db_manage db init
+db_manage db migrate
 ```
 
 # Generate requirements.txt
@@ -39,8 +39,8 @@ pip freeze > requirements.txt
 # Update the database
 Whenever changes are made to database models in any models.py file run the following to update the database.
 
-Run from virtualenv:
+Run from \scripts in the virtualenv:
 ```
-scripts\db_manage db migrate
-scripts\db_manage db upgrade
+db_manage db migrate
+db_manage db upgrade
 ```
