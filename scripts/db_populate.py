@@ -22,7 +22,8 @@ def get_data_from_cache(filename):
     except FileNotFoundError:
         return None
 
-
+if not os.path.exists('tmp/'):
+    os.mkdir('tmp/')
 # Get list of maps, from cached file or the qlrace.com api
 maps = get_data_from_cache('maps.txt')
 if not maps:
@@ -58,7 +59,7 @@ if not players:
     with open(os.path.abspath('tmp/players.txt'), 'w+') as f:
         json.dump(players, f)
 # Insert data into database
-app = create_app('config.config')
+app = create_app('config.config', logging=False)
 with app.app_context():
     # Insert the maps into the database
     maps_with_new_ids = {}

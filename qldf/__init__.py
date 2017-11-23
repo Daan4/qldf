@@ -6,7 +6,7 @@ db = SQLAlchemy()
 nav = Navigation()
 
 
-def create_app(config):
+def create_app(config, logging=True):
     """Create and initialise the object"""
     # Flask
     from flask import Flask
@@ -51,16 +51,20 @@ def create_app(config):
             RotatingFileHandler.emit(self, record)
     # Log via files
     # INFO or higher
-    file_handler = RotatingFileHandler('logs/website.log', 'a', 1 * 1024 * 1024, 10)
-    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s in %(pathname)s:%(lineno)d'))
-    app.logger.setLevel(logging.DEBUG)
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
-    # DEBUG only
-    file_handler = DebugRotatingFileHandler('logs/website_DEBUG.log', 'a', 1 * 1024 * 1024, 10)
-    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d'))
-    file_handler.setLevel(logging.DEBUG)
-    app.logger.addHandler(file_handler)
-    app.logger.info('website startup')
+    # Don't create logging directory and files when run from a different folder
+    if logging:
+        if not os.path.exists('logs/'):
+            os.mkdir('logs/')
+        file_handler = RotatingFileHandler('logs/website.log', 'a', 1 * 1024 * 1024, 10)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s in %(pathname)s:%(lineno)d'))
+        app.logger.setLevel(logging.DEBUG)
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        # DEBUG only
+        file_handler = DebugRotatingFileHandler('logs/website_DEBUG.log', 'a', 1 * 1024 * 1024, 10)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d'))
+        file_handler.setLevel(logging.DEBUG)
+        app.logger.addHandler(file_handler)
+        app.logger.info('website startup')
 
     return app
