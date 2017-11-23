@@ -1,7 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from config.config import *
+from flask_navigation import Navigation
 
 db = SQLAlchemy()
+nav = Navigation()
 
 
 def create_app(config):
@@ -12,6 +14,15 @@ def create_app(config):
     app.config.from_object(config)
     # SQLAlchemy
     db.init_app(app)
+    # Flask-Navigation setup
+    nav.init_app(app)
+    # Add navigation bar items
+    items = [nav.Item('Home', 'root.index'),
+             nav.Item('Records', 'root.records'),
+             nav.Item('Maps', 'root.maps'),
+             nav.Item('Players', 'root.players'),
+             nav.Item('Servers', 'root.servers')]
+    nav.Bar('main', items)
     # Register blueprints
     from qldf.views import root, setup_error_routing
     app.register_blueprint(root)
