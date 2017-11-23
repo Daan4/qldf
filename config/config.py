@@ -20,3 +20,6 @@ MAIL_PASSWORD = c.MAIL_PASSWORD
 
 # Administrator list
 ADMINS = c.ADMINS
+
+# Super secret key
+SECRET_KEY = c.SECRET_KEY
