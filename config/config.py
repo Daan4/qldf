@@ -23,3 +23,6 @@ ADMINS = c.ADMINS
 
 # Super secret key
 SECRET_KEY = c.SECRET_KEY
+
+# Pagination settings
+ROWS_PER_PAGE = 20
