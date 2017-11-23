@@ -59,7 +59,7 @@ if not players:
     with open(os.path.abspath('tmp/players.txt'), 'w+') as f:
         json.dump(players, f)
 # Insert data into database
-app = create_app('config.config', logging=False)
+app = create_app('config.config', create_logfiles=False)
 with app.app_context():
     # Insert the maps into the database
     maps_with_new_ids = {}

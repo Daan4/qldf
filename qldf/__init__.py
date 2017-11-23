@@ -6,7 +6,7 @@ db = SQLAlchemy()
 nav = Navigation()
 
 
-def create_app(config, logging=True):
+def create_app(config, create_logfiles=True):
     """Create and initialise the object"""
     # Flask
     from flask import Flask
@@ -52,7 +52,7 @@ def create_app(config, logging=True):
     # Log via files
     # INFO or higher
     # Don't create logging directory and files when run from a different folder
-    if logging:
+    if create_logfiles:
         if not os.path.exists('logs/'):
             os.mkdir('logs/')
         file_handler = RotatingFileHandler('logs/website.log', 'a', 1 * 1024 * 1024, 10)
