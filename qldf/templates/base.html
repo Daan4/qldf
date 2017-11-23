@@ -42,7 +42,6 @@
             </li>
         {% endfor %}
     </ul>
-    <span id="digital_clock"></span>
     <br><hr>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -54,6 +53,6 @@
         {% endif %}
     {% endwith %}
     <div id="page_content">{% block content %}{% endblock %}</div>
-    <div id="footer"><hr>© Daan Lubbers 2017. <a class="footer" href="https://www.github.com/daan4/qldf">GitHub Repository</a>. Rendered by <a class="footer" href="http://flask.pocoo.org/">Flask</a> in __EXECUTION_TIME__.<br></div>
+    <div id="footer"><hr>© Daan Lubbers 2017. <a class="footer" href="https://www.github.com/daan4/qldf">GitHub Repository</a>. Rendered by <a class="footer" href="http://flask.pocoo.org/">Flask</a> in __EXECUTION_TIME__. <span id="digital_clock"></span></div>
 </body>
 </html>
