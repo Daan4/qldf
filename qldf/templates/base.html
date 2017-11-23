@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='icon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{ title }} - www.qldf.com</title>
+    {% else %}
+    <title>www.qldf.com</title>
+    {% endif %}
+    <script>
+        function startTime() {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('digital_clock').innerHTML =
+            h + ":" + m + ":" + s;
+            var t = setTimeout(startTime, 500);
+        }
+        function checkTime(i) {
+            if (i < 10) {i = "0" + i};
+            return i;
+        }
+    </script>
+</head>
+<body onload="startTime()">
+    <ul class="navigation_bar">
+        {% for item in nav.main %}
+            <li class="menu_item">
+                <a class="{% if item.is_active %}
+                          active_menu_item
+                          {% else %}
+                          menu_item
+                          {% endif %}"
+                href="{{ item.url }}">
+                    {{ item.label }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <span id="digital_clock"></span>
+    <br><hr>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul id="flash_list">
+                {% for message in messages %}
+                <li><div class="flash">>{{ message }}<</div></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <div id="page_content">{% block content %}{% endblock %}</div>
+    <div id="footer"><hr>© Daan Lubbers 2017. <a class="footer" href="https://www.github.com/daan4/qldf">GitHub Repository</a>. Rendered by <a class="footer" href="http://flask.pocoo.org/">Flask</a> in __EXECUTION_TIME__.<br></div>
+</body>
+</html>
