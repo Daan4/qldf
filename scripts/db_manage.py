@@ -12,6 +12,7 @@ from qldf import db, create_app
 # db downgrade [<revision>] : downgrade database to revision
 
 app = create_app('config.config')
+from qldf.models import Map, Player, Record
 
 # setup Flask-Migrate
 migrate = Migrate(app, db, directory=os.path.abspath('..\\migrations'))
