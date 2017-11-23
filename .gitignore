@@ -1,14 +1,15 @@
 # pycharm files
-/.idea/
+.idea/
 
 # virtualenv
-/venv/
+venv/
 
 # configuration files with private data
-/config/website_config.py
+config/website_config.py
 
-# db migrations
-/migrations/
+# db migrations, except the configuration file
+migrations/*
+!migrations/alembic.ini
 
 # log files
-/logs/
+logs/
