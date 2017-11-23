@@ -45,9 +45,10 @@ class BaseModel(db.Model):
 class Player(BaseModel):
     __tablename__ = 'player'
     name = db.Column(db.Text)
+    steam_id = db.Column(db.Text)
 
     def __repr__(self):
-        return f'<Player {self.id}: {self.name}>'
+        return f'<Player {self.id}: {self.name} {self.steam_id}>'
 
 
 class Record(BaseModel):
@@ -57,6 +58,7 @@ class Record(BaseModel):
     player_id = db.Column(db.Integer, ForeignKey('player.id'))
     time = db.Column(db.Integer)
     match_guid = db.Column(db.Text)
+    date = db.Column(db.DateTime)
 
     def __repr__(self):
         return f'<Record {self.id}: {self.map_id} {self.player_id} {self.mode}>'
