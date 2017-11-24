@@ -5,7 +5,7 @@
 venv/
 
 # configuration files with private data
-config/website_config.py
+config/local_config.py
 
 # db migrations, except the configuration file
 migrations/
