@@ -11,7 +11,7 @@ from qldf import db, create_app
 # db upgrade [<revision>] : upgrade database to revision
 # db downgrade [<revision>] : downgrade database to revision
 
-app = create_app('config.config', create_logfiles=False)
+app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
 from qldf.models import Map, Player, Record
 
 # setup Flask-Migrate
@@ -19,5 +19,4 @@ migrate = Migrate(app, db, directory=os.path.abspath('..\\migrations'))
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-if __name__ == '__main__':
-    manager.run()
+manager.run()

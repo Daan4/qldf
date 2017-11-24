@@ -6,6 +6,13 @@ sys.path.insert(0, os.path.abspath('..'))
 from qldf.models import Record, Player, Map
 from qldf import create_app, db
 import json
+import os
+
+# When deploying on heroku, limit the number of data rows. Max 10k rows allowed for free.
+if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.config_heroku':
+    map_limit = 100
+else:
+    map_limit = None
 
 
 def get_data_from_url(url):
@@ -22,6 +29,7 @@ def get_data_from_cache(filename):
     except FileNotFoundError:
         return None
 
+
 if not os.path.exists('tmp/'):
     os.mkdir('tmp/')
 # Get list of maps, from cached file or the qlrace.com api
@@ -30,6 +38,8 @@ if not maps:
     maps = get_data_from_url('https://qlrace.com/api/maps')['maps']
     with open(os.path.abspath('tmp/maps.txt'), 'w+') as f:
         json.dump(maps, f)
+if map_limit:
+    maps = maps[:map_limit]
 # For each map get the records, from cached file or the qlrace.com api
 records = get_data_from_cache('records.txt')
 if not records:
@@ -59,7 +69,7 @@ if not players:
     with open(os.path.abspath('tmp/players.txt'), 'w+') as f:
         json.dump(players, f)
 # Insert data into database
-app = create_app('config.config', create_logfiles=False)
+app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
 with app.app_context():
     # Insert the maps into the database
     maps_with_new_ids = {}
