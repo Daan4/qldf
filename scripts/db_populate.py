@@ -15,11 +15,12 @@ if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.config_heroku':
 else:
     map_limit = None
 
+print(map_limit)
+
 
 def get_data_from_url(url):
     req = Request(url)
     req.add_header('User-Agent', 'qldf api script')
-    print(f'GET from {url}')
     return json.loads(urlopen(req).read().decode())
 
 
