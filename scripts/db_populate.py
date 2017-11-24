@@ -11,7 +11,7 @@ import os
 
 # When deploying on heroku, limit the number of data rows. Max 10k rows allowed for free.
 if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.heroku_config':
-    map_limit = 100
+    map_limit = 10
 else:
     map_limit = None
 
@@ -19,7 +19,6 @@ else:
 def get_data_from_url(url):
     req = Request(url)
     req.add_header('User-Agent', 'qldf api script')
-    print(f'GET from {url}')
     return json.loads(urlopen(req).read().decode())
 
 
@@ -39,6 +38,9 @@ if not maps:
     maps = get_data_from_url('https://qlrace.com/api/maps')['maps']
     with open(os.path.abspath('tmp/maps.txt'), 'w+') as f:
         json.dump(maps, f)
+# limit maps
+if map_limit:
+    maps = maps[:map_limit]
 # For each map get the records, from cached file or the qlrace.com api
 records = get_data_from_cache('records.txt')
 if not records:
