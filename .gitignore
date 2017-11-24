@@ -1,17 +1,20 @@
 # pycharm files
-.idea/
+/.idea/
 
 # virtualenv
-venv/
+/venv/
 
 # configuration files with private data
-config/local_config.py
+/config/local_config.py
 
 # db migrations, except the configuration file
-migrations/
+/migrations/
 
 # log files
-logs/
+/logs/
 
 # script temporary files
-scripts/tmp/
+/scripts/tmp/
+
+# ignore all __pycache__ dirs
+__pycache__/
