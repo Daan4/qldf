@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from config.config import *
 from flask_navigation import Navigation
+from .filters import setup_custom_jinja_filters
 
 db = SQLAlchemy()
 nav = Navigation()
@@ -14,6 +15,21 @@ def create_app(config, create_logfiles=True):
     app.config.from_object(config)
     # SQLAlchemy
     db.init_app(app)
+    # Setup navigation
+    setup_navigation(app)
+    # Register blueprints
+    from qldf.views import root, setup_error_routing
+    app.register_blueprint(root)
+    # Setup routing for html error pages
+    setup_error_routing(app)
+    # Setup logging
+    setup_logging(app, create_logfiles)
+    # Setup custom jinja filters
+    setup_custom_jinja_filters(app)
+    return app
+
+
+def setup_navigation(app):
     # Flask-Navigation setup
     nav.init_app(app)
     # Add navigation bar items
@@ -23,12 +39,9 @@ def create_app(config, create_logfiles=True):
              nav.Item('Players', 'root.players'),
              nav.Item('Servers', 'root.servers')]
     nav.Bar('main', items)
-    # Register blueprints
-    from qldf.views import root, setup_error_routing
-    app.register_blueprint(root)
-    # Setup routing for html error pages
-    setup_error_routing(app)
-    # Setup logging
+
+
+def setup_logging(app, create_logfiles=True):
     import logging
     # Log via email
     if not app.debug:
@@ -66,5 +79,3 @@ def create_app(config, create_logfiles=True):
         file_handler.setLevel(logging.DEBUG)
         app.logger.addHandler(file_handler)
         app.logger.info('website startup')
-
-    return app
