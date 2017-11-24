@@ -30,6 +30,7 @@ def player(page, name):
                                       partition_by=(Record.map_id, Record.mode)
                                   ).label('rank')).\
         join(Player, Map).\
+        filter(Player.name == name).\
         order_by(desc(Record.date)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('player.html',
