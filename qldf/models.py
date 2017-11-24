@@ -2,11 +2,12 @@ from qldf import db
 from flask import flash
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.orm.exc import UnmappedInstanceError
+from sqlalchemy import func
 
 
 class BaseModel(db.Model):
     __abstract__ = True
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, index=True)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
@@ -48,20 +49,20 @@ class Player(BaseModel):
     records = db.relationship('Record', backref='player', lazy=True)
 
     def __repr__(self):
-        return f'<Player {self.id}: {self.name} {self.steam_id}>'
+        return f'<Player {self.id}>'
 
 
 class Record(BaseModel):
     __tablename__ = 'record'
     mode = db.Column(db.Integer)
-    map_id = db.Column(db.Integer, db.ForeignKey('map.id'))
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'))
+    map_id = db.Column(db.Integer, db.ForeignKey('map.id'), index=True)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), index=True)
     time = db.Column(db.Integer)
     match_guid = db.Column(db.Text)
     date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'<Record {self.id}: {self.map_id} {self.player_id} {self.mode}>'
+        return f'<Record {self.id}>'
 
 
 class Map(BaseModel):
@@ -72,4 +73,12 @@ class Map(BaseModel):
     records = db.relationship('Record', backref='map', lazy=True)
 
     def __repr__(self):
-        return f'<Map {self.id}: {self.name}>'
+        return f'<Map {self.id}>'
+
+
+# Indices
+db.Index('ix_record_rank_on_map_and_mode',
+         func.rank().over(
+             order_by=Record.time,
+             partition_by=(Record.map_id, Record.mode)
+         ))
