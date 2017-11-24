@@ -27,3 +27,11 @@ SECRET_KEY = c.SECRET_KEY
 
 # Pagination settings
 ROWS_PER_PAGE = 20
+
+# Record physics modes
+RECORD_MODES = ['PQL Weapons',
+                'PQL Strafe',
+                'VQL Weapons',
+                'VQL Strafe',
+                'VQ3',
+                'CPM']
