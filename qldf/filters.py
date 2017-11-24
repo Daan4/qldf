@@ -9,6 +9,7 @@ def setup_custom_jinja_filters(app):
     app.jinja_env.filters['format_record_time'] = format_record_time
     app.jinja_env.filters['format_record_date'] = format_record_date
     app.jinja_env.filters['format_player_name'] = format_player_name
+    app.jinja_env.filters['format_map_name'] = format_map_name
 
 
 def format_record_mode(mode):
@@ -39,5 +40,10 @@ def format_record_date(date):
 
 
 def format_player_name(name):
-    """Turn the player name into a url to /player/<name>"""
+    """Turn a player name into a url to /player/<name>"""
     return do_mark_safe(f"<a href=\"{url_for('root.player', name=name)}\">{name}</a>")
+
+
+def format_map_name(name):
+    """Turn a map name into a url to /map/<name>"""
+    return do_mark_safe(f"<a href=\"{url_for('root._map', name=name)}\">{name}</a>")
