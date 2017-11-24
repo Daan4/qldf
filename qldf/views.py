@@ -5,21 +5,21 @@ from config.config import ROWS_PER_PAGE
 from sqlalchemy import func, desc
 from qldf import db
 
-root = Blueprint('root', __name__, url_prefix='')
+root = Blueprint('root', __name__, url_prefix='/')
 
 
-@root.route('/')
+@root.route('')
 def index():
     return render_template('index.html')
 
 
-@root.route('/servers/')
+@root.route('servers')
 def servers():
     return render_template('servers.html')
 
 
-@root.route('/player/<string:name>/', defaults={'page': 1})
-@root.route('/player/<string:name>/<int:page>')
+@root.route('player/<string:name>', defaults={'page': 1})
+@root.route('player/<string:name>/<int:page>')
 def player(page, name):
     """Show records and stats for a single player"""
     pagination = db.session.query(Record.mode,
@@ -39,8 +39,8 @@ def player(page, name):
                            pagination=pagination)
 
 
-@root.route('/players/', defaults={'page': 1})
-@root.route('/players/page/<int:page>')
+@root.route('players', defaults={'page': 1})
+@root.route('players/<int:page>')
 def players(page):
     """Show a list of all players and their number of records and world records."""
     # subquery to get all record ranks per player
@@ -79,8 +79,8 @@ def players(page):
                            pagination=pagination)
 
 
-@root.route('/records/', defaults={'page': 1})
-@root.route('/records/page/<int:page>')
+@root.route('records', defaults={'page': 1})
+@root.route('records/<int:page>')
 def records(page):
     pagination = db.session.query(Record.mode,
                                   Record.time,
@@ -99,12 +99,45 @@ def records(page):
                            pagination=pagination)
 
 
-@root.route('/maps/')
-def maps():
-    return render_template('maps.html')
+@root.route('map/<string:name>', defaults={'page': 1})
+@root.route('map/<string:name>/<int:page>')
+def _map(page, name):
+    """Show records on a single map."""
+    pagination = db.session.query(Record.mode,
+                                  Record.time,
+                                  Record.date,
+                                  Player.name.label('player_name'),
+                                  func.rank().over(
+                                      order_by=Record.time,
+                                      partition_by=(Record.map, Record.mode)
+                                  ).label('rank')).\
+        join(Map, Player).\
+        filter(Map.name == name).\
+        order_by(desc(Record.date)).\
+        paginate(page, ROWS_PER_PAGE, True)
+    return render_template('map.html',
+                           title=name,
+                           name=name,
+                           pagination=pagination)
 
 
-@root.route('/api/')
+@root.route('maps', defaults={'page': 1})
+@root.route('maps/<int:page>')
+def maps(page):
+    """Show a list of maps and the number of records on it"""
+    pagination = db.session.query(Map.id,
+                                  Map.name,
+                                  func.count(Map.id).label('record_count')).\
+        join(Map.records).\
+        group_by(Map.id).\
+        order_by(Map.name).\
+        paginate(page, ROWS_PER_PAGE, True)
+    return render_template('maps.html',
+                           title='Maps',
+                           pagination=pagination)
+
+
+@root.route('api')
 def api():
     pass
 
