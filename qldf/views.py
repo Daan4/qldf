@@ -41,7 +41,11 @@ def records(page):
                                   Record.time,
                                   Record.date,
                                   Player.name.label('player_name'),
-                                  Map.name.label('map_name')).\
+                                  Map.name.label('map_name'),
+                                  func.rank().over(
+                                      order_by=Record.time,
+                                      partition_by=(Record.map_id, Record.mode)
+                                  ).label('rank')).\
         join(Player).\
         join(Map).\
         order_by(desc(Record.date)).\
