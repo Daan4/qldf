@@ -57,3 +57,17 @@ db_manage db downgrade
 # Deploying on Heroku
 Follow these instructions:
 https://devcenter.heroku.com/articles/getting-started-with-python#introduction
+
+Set the following config vars:
+```
+QLDF_CONFIG = config.heroku_config
+PORT = 5000
+SECRET_KEY = yoursupersecretkey
+```
+
+Run the deploy_heroku script to create and populate the database with test data.
+
+Other scripts can be ran in a similar way.
+```
+heroku run python scripts/deploy_heroku.py
+```
