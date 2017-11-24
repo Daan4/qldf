@@ -39,9 +39,6 @@ if not maps:
     maps = get_data_from_url('https://qlrace.com/api/maps')['maps']
     with open(os.path.abspath('tmp/maps.txt'), 'w+') as f:
         json.dump(maps, f)
-if map_limit:
-    maps = maps[:map_limit]
-    print('maps limited on heroku')
 # For each map get the records, from cached file or the qlrace.com api
 records = get_data_from_cache('records.txt')
 if not records:
@@ -89,6 +86,9 @@ with app.app_context():
         players_with_new_ids[player_id] = new_player.id
     # Insert the records into the database
     for record in records:
+        print(record)
+        print(records)
+        print(players_with_new_ids)
         new_record = Record(mode=record['mode'],
                             map_id=maps_with_new_ids[record['map']],
                             player_id=players_with_new_ids[str(record['player_id'])],
