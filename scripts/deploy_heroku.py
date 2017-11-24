@@ -6,7 +6,6 @@ heroku run scripts/deploy_heroku.py
 import os
 import subprocess
 
-
 # Set heroku config variables
 os.environ['QLDF_CONFIG'] = 'config.heroku_config'
 os.environ['SECRET_KEY'] = 'ENTER THE SECRET KEY HERE SOMEHOW'
