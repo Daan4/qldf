@@ -12,7 +12,7 @@
     </tr>
     {% for row in pagination.items %}
     <tr>
-        <td>{{ row.map_name }}</td>
+        <td>{{ row.map_name | format_map_name }}</td>
         <td>{{ row.mode | format_record_mode }}</td>
         <td>{{ row.player_name | format_player_name }}</td>
         <td>{{ row.rank }}</td>
