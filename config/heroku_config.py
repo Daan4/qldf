@@ -8,13 +8,13 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Mail server settings
-MAIL_SERVER = None
-MAIL_PORT = None
-MAIL_USERNAME = None
-MAIL_PASSWORD = None
+MAIL_SERVER = 'localhost'
+MAIL_PORT = 1234
+MAIL_USERNAME = 'username'
+MAIL_PASSWORD = 'password'
 
 # Administrator list
-ADMINS = []
+ADMINS = ['Daan@example.com']
 
 # Super secret key
 SECRET_KEY = os.environ.get('SECRET_KEY')
