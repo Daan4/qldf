@@ -1,7 +1,7 @@
 """
 First time setup of environment variables and postgres addon when deploying on Heroku
 Run with
-heroku run scripts/deploy_heroku.py
+heroku run python scripts/deploy_heroku.py
 """
 import os
 import subprocess
@@ -11,7 +11,7 @@ os.environ['QLDF_CONFIG'] = 'config.heroku_config'
 os.environ['SECRET_KEY'] = 'ENTER THE SECRET KEY HERE SOMEHOW'
 os.environ['PORT'] = '5000'
 # Create database with test data
-subprocess.call('scripts/db_create.py')
-subprocess.call('scripts/db_populate.py')
+subprocess.call('python scripts/db_create.py')
+subprocess.call('python scripts/db_populate.py')
 # Init database migrations
-subprocess.call(['scripts/db_manage.py', 'db', 'init'])
+subprocess.call(['python', 'scripts/db_manage.py', 'db', 'init'])
