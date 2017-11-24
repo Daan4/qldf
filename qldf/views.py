@@ -18,9 +18,31 @@ def servers():
     return render_template('servers.html')
 
 
+@root.route('/player/<string:name>/', defaults={'page': 1})
+@root.route('/player/<string:name>/<int:page>')
+def player(page, name):
+    """Show records and stats for a single player"""
+    pagination = db.session.query(Record.mode,
+                                  Record.time,
+                                  Record.date,
+                                  Map.name.label('map_name'),
+                                  func.rank().over(
+                                      order_by=Record.time,
+                                      partition_by=(Record.map_id, Record.mode)
+                                  ).label('rank')).\
+        join(Player, Map).\
+        order_by(desc(Record.date)).\
+        paginate(page, ROWS_PER_PAGE, True)
+    return render_template('player.html',
+                           title=name,
+                           name=name,
+                           pagination=pagination)
+
+
 @root.route('/players/', defaults={'page': 1})
 @root.route('/players/page/<int:page>')
 def players(page):
+    """Show a list of all players and their number of records and world records."""
     # subquery to get all record ranks per player
     sq = db.session.query(Player.id.label('id'),
                                   func.rank().over(
@@ -36,7 +58,6 @@ def players(page):
         filter(sq.c.rank == 1).\
         group_by(Player.id).\
         subquery()
-    # subquery to get wr count
     # subquery to get record count per player
     sq3 = db.session.query(Player.id.label('id'),
                            func.count(Player.id).label('record_count')).\
@@ -70,8 +91,7 @@ def records(page):
                                       order_by=Record.time,
                                       partition_by=(Record.map_id, Record.mode)
                                   ).label('rank')).\
-        join(Player).\
-        join(Map).\
+        join(Player, Map).\
         order_by(desc(Record.date)).\
         paginate(page, ROWS_PER_PAGE, True)
     return render_template('records.html',
