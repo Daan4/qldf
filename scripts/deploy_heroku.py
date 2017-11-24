@@ -7,9 +7,7 @@ import os
 import subprocess
 
 # Set heroku config variables
-os.environ['QLDF_CONFIG'] = 'config.heroku_config'
-os.environ['SECRET_KEY'] = 'ENTER THE SECRET KEY HERE SOMEHOW'
-os.environ['PORT'] = '5000'
+subprocess.call(['heroku', 'config:set', 'QLDF_CONFIG=config.heroku_config', 'SECRET_KEY=ENTERTHESECRETKEYHERESOMEHOW', 'PORT=5000'])
 # Create database with test data
 subprocess.call(['python', 'scripts/db_create.py'])
 subprocess.call(['python', 'scripts/db_populate.py'])
