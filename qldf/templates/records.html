@@ -1,4 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
     Records
+<table>
+    <tr>
+        <th>Map</th>
+        <th>Mode</th>
+        <th>Player</th>
+        <th>Rank</th>
+        <th>Time</th>
+        <th>Date</th>
+    </tr>
+    {% for row in pagination.items %}
+    <tr>
+        <td>{{ row.map_name }}</td>
+        <td>{{ row.mode | format_record_mode }}</td>
+        <td>{{ row.player_name }}</td>
+        <td>{{ row.rank }}</td>
+        <td>{{ row.time | format_record_time }}</td>
+        <td>{{ row.date | format_record_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% if pagination.has_prev %}<a href="{{ url_for('root.records', page=pagination.prev_num) }}">&lt;&lt; Previous</a>
+{% else %}&lt;&lt; Previous
+{% endif %} |
+{% if pagination.has_next %}<a href="{{ url_for('root.records', page=pagination.next_num) }}">Next &gt;&gt;</a>
+{% else %}Next &gt;&gt;
+{% endif %}
 {% endblock %}
