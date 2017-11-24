@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, session, url_for, g, request
 from time import time
 from .models import Player, Record, Map
 from config.config import ROWS_PER_PAGE
-from sqlalchemy import func, and_
+from sqlalchemy import func, desc
 from qldf import db
 
 root = Blueprint('root', __name__, url_prefix='')
@@ -21,42 +21,34 @@ def servers():
 @root.route('/players/', defaults={'page': 1})
 @root.route('/players/page/<int:page>')
 def players(page):
-    # see https://stackoverflow.com/questions/6206600/sqlalchemy-subquery-in-a-where-clause
-    # t = db.session.query(Player.id,
-    #                      func.count(Player.id).label('record_count'),
-    # ).join(Player.records).group_by(Player.id).subquery('t')
-    # pagination = db.session.query(Player, Record).filter(and_(
-    #     Player.id == Record.player_id,
-    #     Player.id == t.c.id
-    # )).order_by(Player.name).paginate(page, ROWS_PER_PAGE, True)
-    # pagination = db.session.query(Player).\
-    #     outerjoin(Player.records).\
-    #     filter(Player.id == Record.player_id). \
-    #     add_column(func.count(Player.id)). \
-    #     group_by(Player.id).\
-    #     paginate(page, ROWS_PER_PAGE, True)\
-    #https://stackoverflow.com/questions/41362153/sqlalchemy-count-function-for-nested-join-subquery
-    stmt = db.session.query(
-        Player.id,
-        func.count(Record.player_id.distinct()).label('record_count')
-    ).join(Record).\
+    pagination = db.session.query(Player.id,
+                                  Player.name,
+                                  func.count(Player.id).label('record_count'),
+                                  Player.steam_id).\
+        join(Player.records).\
         group_by(Player.id).\
-        subquery()
-
-    print(str(db.session.query(Player,
-                                  stmt.c.record_count).\
-        outerjoin(stmt, Player.id == stmt.c.id).\
-        order_by(Player.name).paginate(page, ROWS_PER_PAGE,True))
-
-
+        order_by(Player.name).\
+        paginate(page, ROWS_PER_PAGE, True)
     return render_template('players.html',
                            title='Players',
                            pagination=pagination)
 
 
-@root.route('/records/')
-def records():
-    return render_template('records.html')
+@root.route('/records/', defaults={'page': 1})
+@root.route('/records/page/<int:page>')
+def records(page):
+    pagination = db.session.query(Record.mode,
+                                  Record.time,
+                                  Record.date,
+                                  Player.name.label('player_name'),
+                                  Map.name.label('map_name')).\
+        join(Player).\
+        join(Map).\
+        order_by(desc(Record.date)).\
+        paginate(page, ROWS_PER_PAGE, True)
+    return render_template('records.html',
+                           title='Records',
+                           pagination=pagination)
 
 
 @root.route('/maps/')
