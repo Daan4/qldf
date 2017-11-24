@@ -77,8 +77,8 @@ class Map(BaseModel):
 
 
 # Indices
-db.Index('ix_record_rank_on_map_and_mode',
-         func.rank().over(
-             order_by=Record.time,
-             partition_by=(Record.map_id, Record.mode)
-         ))
+# db.Index('ix_record_rank_on_map_and_mode',
+#          func.rank().over(
+#              order_by=Record.time,
+#              partition_by=(Record.map_id, Record.mode)
+#          ))
