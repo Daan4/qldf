@@ -9,18 +9,27 @@ def setup_custom_jinja_filters(app):
 
 
 def format_record_mode(mode):
-    return RECORD_MODES[mode]
+    if mode or mode == 0:
+        return RECORD_MODES[mode]
+    else:
+        return '-'
 
 
 def format_record_time(time):
-    minutes = time // 60000
-    seconds = (time % 60000) // 1000
-    millis = (time % 60000) % 1000
-    if minutes == 0:
-        return f'{seconds}.{millis}'
+    if time:
+        minutes = time // 60000
+        seconds = (time % 60000) // 1000
+        millis = (time % 60000) % 1000
+        if minutes == 0:
+            return f'{seconds}.{millis}'
+        else:
+            return f'{minutes}:{seconds}.{millis}'
     else:
-        return f'{minutes}:{seconds}.{millis}'
+        return '-'
 
 
 def format_record_date(date):
-    return date.strftime('%Y-%m-%d %H:%M:%S UTC')
+    if date:
+        return date.strftime('%Y-%m-%d %H:%M:%S UTC')
+    else:
+        return '-'
