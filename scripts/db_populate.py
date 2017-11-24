@@ -8,6 +8,7 @@ from qldf import create_app, db
 import json
 import os
 
+
 # When deploying on heroku, limit the number of data rows. Max 10k rows allowed for free.
 if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.config_heroku':
     map_limit = 100

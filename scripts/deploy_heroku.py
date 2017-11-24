@@ -1,10 +1,11 @@
 """
 First time setup of environment variables and postgres addon when deploying on Heroku
 Run with
-
+heroku run scripts/deploy_heroku.py
 """
 import os
 import subprocess
+
 
 # Set heroku config variables
 os.environ['QLDF_CONFIG'] = 'config.heroku_config'

@@ -5,6 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath('..'))
 from qldf import db, create_app
 
+
 # available commands
 # db init : create migrations folder
 # db migrate : create migration
