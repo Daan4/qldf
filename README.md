@@ -1,7 +1,7 @@
 This readme file is a work in progress...
 
 # Setup windows environment for development
-1. Setup virtualenv and install dependencies.
+1. Setup virtualenv (python version 3.6.3+) and install dependencies.
 
 Run from project folder:
 ```
@@ -11,7 +11,32 @@ venv\scripts\activate
 pip install -r requirements.txt
 ```
 
-2. Download and install postgres v10.1, then create the qldf database.
+2. Create config/website_config.py and add the following contents:
+```
+SECRET_KEY = 'your super secret key goes here'
+
+# Database settings
+DB_USERNAME = 'postgres'
+DB_PASSWORD = 'password'
+DB_HOST = 'localhost'
+DB_NAME = 'qldf'
+DB_PORT = 5433  # usually 5432 or 5433
+SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(DB_USERNAME,
+                                                            DB_PASSWORD,
+                                                            DB_HOST,
+                                                            DB_NAME)
+
+# Mail settings
+MAIL_HOST = "localhost"
+MAIL_PORT = "25"
+MAIL_USERNAME = None
+MAIL_PASSWORD = None
+
+# Admin emails
+ADMINS = ['admin@example.com']
+```
+
+2. Download and install postgres v10.1+, then create the qldf database.
 
 Run from "..\PostgreSQL\10\bin":
 ```
@@ -25,12 +50,11 @@ Run from \scripts in the virtualenv:
 db_create
 ```
 
-4. Setup database migration.
+4. Setup database migration directory.
 
 Run from \scripts in the virtualenv:
 ```
 db_manage db init
-db_manage db migrate
 ```
 
 # Generate requirements.txt
@@ -47,3 +71,12 @@ Run from \scripts in the virtualenv:
 db_manage db migrate
 db_manage db upgrade
 ```
+
+To revert changes:
+```
+db_manage db downgrade
+```
+
+# Deploying on Heroku
+Follow these instructions:
+https://devcenter.heroku.com/articles/getting-started-with-python#introduction
