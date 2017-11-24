@@ -1,6 +1,5 @@
 """Custom jinja filters"""
-from config.config import RECORD_MODES
-from flask import url_for
+from flask import url_for, current_app
 from jinja2.filters import do_mark_safe
 
 
@@ -14,7 +13,7 @@ def setup_custom_jinja_filters(app):
 
 def format_record_mode(mode):
     if mode or mode == 0:
-        return RECORD_MODES[mode]
+        return current_app.config['RECORD_MODES'][mode]
     else:
         return '-'
 

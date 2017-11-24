@@ -23,7 +23,7 @@ def create_app(config, create_logfiles=True):
     # Setup routing for html error pages
     setup_error_routing(app)
     # Setup logging
-    setup_logging(app, create_logfiles, config)
+    setup_logging(app, create_logfiles,)
     # Setup custom jinja filters
     setup_custom_jinja_filters(app)
     return app
@@ -41,15 +41,13 @@ def setup_navigation(app):
     nav.Bar('main', items)
 
 
-def setup_logging(app, config, create_logfiles=True):
+def setup_logging(app, create_logfiles=True):
     import logging
     # Log via email
     if not app.debug:
         from logging.handlers import SMTPHandler
-        credentials = None
-        if config.MAIL_USERNAME and config.MAIL_PASSWORD:
-            credentials = (config.MAIL_USERNAME, config.MAIL_PASSWORD)
-        mail_handler = SMTPHandler((config.MAIL_SERVER, config.MAIL_PORT), 'no-reply@' + config.MAIL_SERVER, config.ADMINS, 'www.qldf.com failure', credentials)
+        credentials = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+        mail_handler = SMTPHandler((app.config['MAIL_SERVER'], app.config['MAIL_PORT']), 'no-reply@' + app.config['MAIL_SERVER'], app.config['ADMINS'], 'www.qldf.com failure', credentials)
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
     from logging.handlers import RotatingFileHandler

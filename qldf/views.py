@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, session, url_for, g, request
+from flask import Blueprint, render_template, session, url_for, g, request, current_app
 from time import time
 from .models import Player, Record, Map
-from config.config import ROWS_PER_PAGE
 from sqlalchemy import func, desc
 from qldf import db
 
@@ -32,7 +31,7 @@ def player(page, name):
                                   ).label('rank')).\
         join(Player, Map).\
         order_by(desc(Record.date)).\
-        paginate(page, ROWS_PER_PAGE, True)
+        paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('player.html',
                            title=name,
                            name=name,
@@ -73,7 +72,7 @@ def players(page):
         outerjoin(sq2, sq2.c.id == Player.id).\
         join(sq3, sq3.c.id == Player.id).\
         order_by(Player.name).\
-        paginate(page, ROWS_PER_PAGE, True)
+        paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('players.html',
                            title='Players',
                            pagination=pagination)
@@ -93,7 +92,7 @@ def records(page):
                                   ).label('rank')).\
         join(Player, Map).\
         order_by(desc(Record.date)).\
-        paginate(page, ROWS_PER_PAGE, True)
+        paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('records.html',
                            title='Records',
                            pagination=pagination)
@@ -114,7 +113,7 @@ def _map(page, name):
         join(Map, Player).\
         filter(Map.name == name).\
         order_by(desc(Record.date)).\
-        paginate(page, ROWS_PER_PAGE, True)
+        paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('map.html',
                            title=name,
                            name=name,
@@ -131,7 +130,7 @@ def maps(page):
         join(Map.records).\
         group_by(Map.id).\
         order_by(Map.name).\
-        paginate(page, ROWS_PER_PAGE, True)
+        paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('maps.html',
                            title='Maps',
                            pagination=pagination)
