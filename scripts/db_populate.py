@@ -88,12 +88,15 @@ with app.app_context():
         players_with_new_ids[player_id] = new_player.id
     # Insert the records into the database
     for record in records:
-        print(record)
-        print(records)
-        print(players_with_new_ids)
+        # player_with_new_ids keys can be an int or a str
+        # seems to depend on if they were loaded from cache or from the api
+        try:
+            player_id = players_with_new_ids[str(record['player_id'])]
+        except KeyError:
+            player_id = players_with_new_ids[int(record['player_id'])]
         new_record = Record(mode=record['mode'],
                             map_id=maps_with_new_ids[record['map']],
-                            player_id=players_with_new_ids[str(record['player_id'])],
+                            player_id=player_id,
                             time=record['time'],
                             match_guid=record['match_guid'],
                             date=record['date'])
