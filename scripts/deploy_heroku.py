@@ -11,7 +11,7 @@ os.environ['QLDF_CONFIG'] = 'config.heroku_config'
 os.environ['SECRET_KEY'] = 'ENTER THE SECRET KEY HERE SOMEHOW'
 os.environ['PORT'] = '5000'
 # Create database with test data
-subprocess.call('python scripts/db_create.py')
-subprocess.call('python scripts/db_populate.py')
+subprocess.call(['python', 'scripts/db_create.py'])
+subprocess.call(['python', 'scripts/db_populate.py'])
 # Init database migrations
 subprocess.call(['python', 'scripts/db_manage.py', 'db', 'init'])
