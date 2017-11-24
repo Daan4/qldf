@@ -21,12 +21,36 @@ def servers():
 @root.route('/players/', defaults={'page': 1})
 @root.route('/players/page/<int:page>')
 def players(page):
-    pagination = db.session.query(Player.id,
-                                  Player.name,
-                                  func.count(Player.id).label('record_count'),
-                                  Player.steam_id).\
+    # subquery to get all record ranks per player
+    sq = db.session.query(Player.id.label('id'),
+                                  func.rank().over(
+                                      order_by=Record.time,
+                                      partition_by=(Record.map_id, Record.mode)
+                                  ).label('rank')).\
+        join(Player.records).\
+        subquery()
+    # subquery to get wr count per player
+    sq2 = db.session.query(Player.id.label('id'),
+                           func.count(sq.c.id).label('wr_count')).\
+        join(sq, sq.c.id == Player.id).\
+        filter(sq.c.rank == 1).\
+        group_by(Player.id).\
+        subquery()
+    # subquery to get wr count
+    # subquery to get record count per player
+    sq3 = db.session.query(Player.id.label('id'),
+                           func.count(Player.id).label('record_count')).\
         join(Player.records).\
         group_by(Player.id).\
+        subquery()
+    # final query joining record count and wr count
+    pagination = db.session.query(Player.id,
+                                  Player.name,
+                                  Player.steam_id,
+                                  func.coalesce(sq2.c.wr_count, '0').label('wr_count'),
+                                  sq3.c.record_count.label('record_count')).\
+        outerjoin(sq2, sq2.c.id == Player.id).\
+        join(sq3, sq3.c.id == Player.id).\
         order_by(Player.name).\
         paginate(page, ROWS_PER_PAGE, True)
     return render_template('players.html',
