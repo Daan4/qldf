@@ -1,0 +1,15 @@
+404 previous link takes u back to http://127.0.0.1:5000/static/icon.ico sometimes ?
+
+show local times
+
+db performance: caching and indexing
+
+move queries to models?
+
+create api blueprint to accept new times and allow users to get data
+
+stats page
+
+link maps to steam workshop
+
+server browser
