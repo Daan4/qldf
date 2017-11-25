@@ -71,3 +71,11 @@ Other scripts can be ran in a similar way.
 ```
 heroku run python scripts/deploy_heroku.py
 ```
+
+Some other useful heroku cli commands
+```
+# Start web dyno
+heroku ps:scale web=1
+# Open page
+heroku open
+```
