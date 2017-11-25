@@ -26,7 +26,7 @@ def format_record_time(time):
         seconds = (time % 60000) // 1000
         millis = (time % 60000) % 1000
         if minutes == 0:
-            return f'{seconds}.{millis}'
+            return f'{seconds}.{str(millis).zfill(3)}'
         else:
             return f'{minutes}:{str(seconds).zfill(2)}.{str(millis).zfill(3)}'
     else:
