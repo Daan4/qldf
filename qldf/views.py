@@ -1,54 +1,72 @@
 from flask import Blueprint, render_template, session, url_for, g, request, current_app
 from time import time
 from .models import Player, Record, Map
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, asc
 from qldf import db
 
 root = Blueprint('root', __name__, url_prefix='/')
 
 
-@root.route('')
+@root.route('/')
 def index():
     return render_template('index.html')
 
 
-@root.route('servers')
+@root.route('servers/')
 def servers():
     return render_template('servers.html')
 
 
-@root.route('player/<string:name>', defaults={'page': 1})
-@root.route('player/<string:name>/<int:page>')
-def player(page, name):
+@root.route('player/<string:name>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': desc})
+@root.route('player/<string:name>/<int:page>/<string:sortby>/<string:sortdir>/')
+@root.route('player/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': desc})
+@root.route('player/<string:name>/<int:page>/', defaults={'sortby': 'date', 'sortdir': desc})
+def player(page, name, sortby, sortdir):
     """Show records and stats for a single player"""
-    pagination = db.session.query(Record.mode,
-                                  Record.time,
-                                  Record.date,
-                                  Map.name.label('map_name'),
-                                  func.rank().over(
-                                      order_by=Record.time,
-                                      partition_by=(Record.map_id, Record.mode)
-                                  ).label('rank')).\
-        join(Player, Map).\
+    if sortdir == 'asc':
+        sortdir = asc
+    else:
+        sortdir = desc
+    # Get 'rank' in subquery before filtering on player name and ordering
+    sq = db.session.query(Record.mode.label('mode'),
+                          Record.time.label('time'),
+                          Record.date.label('date'),
+                          Record.player_id.label('player_id'),
+                          Map.name.label('map_name'),
+                          func.rank().over(
+                              order_by=Record.time,
+                              partition_by=(Record.map_id, Record.mode)
+                          ).label('rank')).\
+        join(Map).\
+        subquery()
+    pagination = db.session.query(Player.id,
+                                  sq.c.mode.label('mode'),
+                                  sq.c.time.label('time'),
+                                  sq.c.date.label('date'),
+                                  sq.c.map_name.label('map_name'),
+                                  sq.c.rank.label('rank')).\
+        join(sq, sq.c.player_id == Player.id).\
         filter(Player.name == name).\
-        order_by(desc(Record.date)).\
+        order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('player.html',
                            title=name,
                            name=name,
-                           pagination=pagination)
+                           pagination=pagination,
+                           sortdir=sortdir.__name__,
+                           reverse_sortdir_on=sortby)
 
 
-@root.route('players', defaults={'page': 1})
-@root.route('players/<int:page>')
+@root.route('players/', defaults={'page': 1})
+@root.route('players/<int:page>/')
 def players(page):
     """Show a list of all players and their number of records and world records."""
     # subquery to get all record ranks per player
     sq = db.session.query(Player.id.label('id'),
-                                  func.rank().over(
-                                      order_by=Record.time,
-                                      partition_by=(Record.map_id, Record.mode)
-                                  ).label('rank')).\
+                          func.rank().over(
+                              order_by=Record.time,
+                              partition_by=(Record.map_id, Record.mode)
+                          ).label('rank')).\
         join(Player.records).\
         subquery()
     # subquery to get wr count per player
@@ -79,8 +97,8 @@ def players(page):
                            pagination=pagination)
 
 
-@root.route('records', defaults={'page': 1})
-@root.route('records/<int:page>')
+@root.route('records/', defaults={'page': 1})
+@root.route('records/<int:page>/')
 def records(page):
     pagination = db.session.query(Record.mode,
                                   Record.time,
@@ -99,8 +117,8 @@ def records(page):
                            pagination=pagination)
 
 
-@root.route('map/<string:name>', defaults={'page': 1})
-@root.route('map/<string:name>/<int:page>')
+@root.route('map/<string:name>/', defaults={'page': 1})
+@root.route('map/<string:name>/<int:page>/')
 def _map(page, name):
     """Show records on a single map."""
     pagination = db.session.query(Record.mode,
@@ -121,8 +139,8 @@ def _map(page, name):
                            pagination=pagination)
 
 
-@root.route('maps', defaults={'page': 1})
-@root.route('maps/<int:page>')
+@root.route('maps/', defaults={'page': 1})
+@root.route('maps/<int:page>/')
 def maps(page):
     """Show a list of maps and the number of records on it"""
     pagination = db.session.query(Map.id,
@@ -137,7 +155,7 @@ def maps(page):
                            pagination=pagination)
 
 
-@root.route('api')
+@root.route('api/')
 def api():
     pass
 

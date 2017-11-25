@@ -4,11 +4,11 @@
 Records
 <table>
     <tr>
-        <th>Map</th>
-        <th>Mode</th>
-        <th>Rank</th>
-        <th>Time</th>
-        <th>Date</th>
+        <th>{{ 'Map' | format_sortable_table_header('map_name', sortdir, reverse_sortdir_on, name=name, page=pagination.page) }}</th>
+        <th>{{ 'Mode' | format_sortable_table_header('mode', sortdir, reverse_sortdir_on, name=name, page=pagination.page) }}</th>
+        <th>{{ 'Rank' | format_sortable_table_header('rank', sortdir, reverse_sortdir_on, name=name, page=pagination.page) }}</th>
+        <th>{{ 'Time' | format_sortable_table_header('time', sortdir, reverse_sortdir_on, name=name, page=pagination.page) }}</th>
+        <th>{{ 'Date' | format_sortable_table_header('date', sortdir, reverse_sortdir_on, name=name, page=pagination.page) }}</th>
     </tr>
     {% for row in pagination.items %}
     <tr>
