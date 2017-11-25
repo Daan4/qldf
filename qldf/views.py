@@ -133,10 +133,16 @@ def records(page, sortby, sortdir):
                            reverse_sortdir_on=sortby)
 
 
-@root.route('map/<string:name>/', defaults={'page': 1})
-@root.route('map/<string:name>/<int:page>/')
-def _map(page, name):
+@root.route('map/<string:name>/', defaults={'page': 1, 'sortby': 'rank', 'sortdir': 'asc'})
+@root.route('map/<string:name>/<int:page>/', defaults={'sortby': 'rank', 'sortdir': 'asc'})
+@root.route('map/<string:name>/<int:page>/<string:sortby>/<string:sortdir>/')
+@root.route('map/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
+def _map(page, name, sortby, sortdir):
     """Show records on a single map."""
+    if sortdir == 'asc':
+        sortdir = asc
+    else:
+        sortdir = desc
     pagination = db.session.query(Record.mode,
                                   Record.time,
                                   Record.date,
@@ -147,28 +153,38 @@ def _map(page, name):
                                   ).label('rank')).\
         join(Map, Player).\
         filter(Map.name == name).\
-        order_by(desc(Record.date)).\
+        order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('map.html',
                            title=name,
                            name=name,
-                           pagination=pagination)
+                           pagination=pagination,
+                           sortdir=sortdir.__name__,
+                           reverse_sortdir_on=sortby)
 
 
-@root.route('maps/', defaults={'page': 1})
-@root.route('maps/<int:page>/')
-def maps(page):
+@root.route('maps/', defaults={'page': 1, 'sortby': 'name', 'sortdir': 'asc'})
+@root.route('maps/<int:page>/', defaults={'sortby': 'name', 'sortdir': 'asc'})
+@root.route('maps/<int:page>/<string:sortby>/<string:sortdir>/')
+@root.route('maps/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
+def maps(page, sortby, sortdir):
+    if sortdir == 'asc':
+        sortdir = asc
+    else:
+        sortdir = desc
     """Show a list of maps and the number of records on it"""
     pagination = db.session.query(Map.id,
                                   Map.name,
                                   func.count(Map.id).label('record_count')).\
         join(Map.records).\
         group_by(Map.id).\
-        order_by(Map.name).\
+        order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('maps.html',
                            title='Maps',
-                           pagination=pagination)
+                           pagination=pagination,
+                           sortdir=sortdir.__name__,
+                           reverse_sortdir_on=sortby)
 
 
 @root.route('api/')

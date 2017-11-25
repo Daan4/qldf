@@ -3,8 +3,8 @@
     Maps
 <table>
     <tr>
-        <th>Name</th>
-        <th>Records</th>
+        <th>{{ 'Name' | format_sortable_table_header('name', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
+        <th>{{ 'Records' | format_sortable_table_header('record_count', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
     </tr>
     {% for row in pagination.items %}
     <tr>
