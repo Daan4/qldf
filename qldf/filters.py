@@ -40,9 +40,9 @@ def format_record_date(date):
         return '-'
 
 
-def format_player_name(name):
-    """Turn a player name into a url to /player/<name>"""
-    return do_mark_safe(f"<a href=\"{url_for('root.player', name=name)}\">{name}</a>")
+def format_player_name(name, steam_id):
+    """Turn a player name into a url to /player/<steam_id>"""
+    return do_mark_safe(f"<a href=\"{url_for('root.player', steam_id=steam_id)}\">{name}</a>")
 
 
 def format_map_name(name):

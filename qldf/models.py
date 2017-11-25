@@ -45,7 +45,7 @@ class BaseModel(db.Model):
 class Player(BaseModel):
     __tablename__ = 'player'
     name = db.Column(db.Text)
-    steam_id = db.Column(db.Text)
+    steam_id = db.Column(db.Text, unique=True)
     records = db.relationship('Record', backref='player', lazy=True)
 
     def __repr__(self):

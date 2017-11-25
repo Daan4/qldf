@@ -13,7 +13,7 @@ Records
     {% for row in pagination.items %}
     <tr>
         <td>{{ row.rank }}</td>
-        <td>{{ row.player_name | format_player_name}}</td>
+        <td>{{ row.player_name | format_player_name(row.steam_id) }}</td>
         <td>{{ row.mode | format_record_mode }}</td>
         <td>{{ row.time | format_record_time }}</td>
         <td>{{ row.date | format_record_date }}</td>

@@ -1,18 +1,29 @@
 from flask import Blueprint, render_template, session, url_for, g, request, current_app
 from time import time
 from .models import Player, Record, Map
+from .forms import SearchForm, SEARCH_TYPES
 from sqlalchemy import func, desc, asc
 from qldf import db
 
-root = Blueprint('root', __name__, url_prefix='/')
+root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', static_folder='static')
 
 
-@root.route('/')
+@root.route('/', methods=['GET', 'POST'])
 def index():
+    # Add search form
+    search_form = SearchForm()
+    if search_form.validate_on_submit() and search_form.search_data:
+        # Do a search
+        search_string = search_form.search_string.data
+        search_type = search_form.search_type.data
+        if search_type == SEARCH_TYPES[0]:
+            search_results = db.session.query(Player.id,
+                                              Player.name)
     # Get rows of recent records
     recent_records = db.session.query(Record.mode,
                                       Map.name.label('map_name'),
                                       Player.name.label('player_name'),
+                                      Player.steam_id,
                                       Record.time,
                                       Record.date,
                                       func.rank().over(
@@ -32,6 +43,7 @@ def index():
     recent_world_records = db.session.query(Record.mode,
                                             Map.name.label('map_name'),
                                             Player.name.label('player_name'),
+                                            Player.steam_id,
                                             Record.time,
                                             Record.date,
                                             sq.c.rank.label('rank')).\
@@ -48,7 +60,8 @@ def index():
     return render_template('index.html',
                            recent_records=recent_records,
                            recent_world_records=recent_world_records,
-                           recent_maps=recent_maps)
+                           recent_maps=recent_maps,
+                           search_form=search_form)
 
 
 @root.route('servers/')
@@ -56,11 +69,11 @@ def servers():
     return render_template('servers.html')
 
 
-@root.route('player/<string:name>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': 'desc'})
-@root.route('player/<string:name>/<int:page>/<string:sortby>/<string:sortdir>/')
-@root.route('player/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
-@root.route('player/<string:name>/<int:page>/', defaults={'sortby': 'date', 'sortdir': 'desc'})
-def player(page, name, sortby, sortdir):
+@root.route('player/<string:steam_id>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': 'desc'})
+@root.route('player/<string:steam_id>/<int:page>/<string:sortby>/<string:sortdir>/')
+@root.route('player/<string:steam_id>/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
+@root.route('player/<string:steam_id>/<int:page>/', defaults={'sortby': 'date', 'sortdir': 'desc'})
+def player(page, steam_id, sortby, sortdir):
     """Show records and stats for a single player"""
     if sortdir == 'asc':
         sortdir = asc
@@ -79,18 +92,22 @@ def player(page, name, sortby, sortdir):
         join(Map).\
         subquery()
     pagination = db.session.query(Player.id,
+                                  Player.steam_id,
+                                  Player.name.label('player_name'),
                                   sq.c.mode.label('mode'),
                                   sq.c.time.label('time'),
                                   sq.c.date.label('date'),
                                   sq.c.map_name.label('map_name'),
                                   sq.c.rank.label('rank')).\
         join(sq, sq.c.player_id == Player.id).\
-        filter(Player.name == name).\
+        filter(Player.steam_id == steam_id).\
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
+    name = pagination.items[0].player_name
     return render_template('player.html',
-                           title=name,
+                           title=steam_id,
                            name=name,
+                           steam_id=steam_id,
                            pagination=pagination,
                            sortdir=sortdir.__name__,
                            reverse_sortdir_on=sortby)
@@ -157,6 +174,7 @@ def records(page, sortby, sortdir):
                                   Record.time,
                                   Record.date,
                                   Player.name.label('player_name'),
+                                  Player.steam_id,
                                   Map.name.label('map_name'),
                                   func.rank().over(
                                       order_by=Record.time,
@@ -186,6 +204,7 @@ def _map(page, name, sortby, sortdir):
                                   Record.time,
                                   Record.date,
                                   Player.name.label('player_name'),
+                                  Player.steam_id,
                                   func.rank().over(
                                       order_by=Record.time,
                                       partition_by=(Record.map_id, Record.mode)

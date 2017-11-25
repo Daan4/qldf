@@ -10,7 +10,7 @@ Players
     </tr>
     {% for row in pagination.items %}
     <tr>
-        <td>{{ row.name | format_player_name}}</td>
+        <td>{{ row.name | format_player_name(row.steam_id) }}</td>
         <td>{{ row.wr_count }}</td>
         <td>{{ row.record_count }}</td>
         <td>{{ row.steam_id }}</td>
