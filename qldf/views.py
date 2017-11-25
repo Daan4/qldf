@@ -9,7 +9,46 @@ root = Blueprint('root', __name__, url_prefix='/')
 
 @root.route('/')
 def index():
-    return render_template('index.html')
+    # Get rows of recent records
+    recent_records = db.session.query(Record.mode,
+                                      Map.name.label('map_name'),
+                                      Player.name.label('player_name'),
+                                      Record.time,
+                                      Record.date,
+                                      func.rank().over(
+                                          order_by=Record.time,
+                                          partition_by=(Record.map_id, Record.mode)
+                                      ).label('rank')).\
+        join(Player, Map).\
+        order_by(desc(Record.date)).\
+        limit(current_app.config['NUM_RECENT_RECORDS'])
+
+    # Get rows of recent world records
+    sq = db.session.query(Record.id,
+                          func.rank().over(
+                              order_by=Record.time,
+                              partition_by=(Record.map_id, Record.mode)
+                          ).label('rank')).subquery()
+    recent_world_records = db.session.query(Record.mode,
+                                            Map.name.label('map_name'),
+                                            Player.name.label('player_name'),
+                                            Record.time,
+                                            Record.date,
+                                            sq.c.rank.label('rank')).\
+        join(Player, Map).\
+        join(sq, sq.c.id == Record.id).\
+        filter(sq.c.rank == 1).\
+        order_by(desc(Record.date)).\
+        limit(current_app.config['NUM_RECENT_WORLD_RECORDS'])
+    # Get rows of recent maps
+    recent_maps = db.session.query(Map.name,
+                                   Map.date_created).\
+        order_by(desc(Map.date_created)).\
+        limit(current_app.config['NUM_RECENT_MAPS'])
+    return render_template('index.html',
+                           recent_records=recent_records,
+                           recent_world_records=recent_world_records,
+                           recent_maps=recent_maps)
 
 
 @root.route('servers/')
