@@ -19,7 +19,7 @@ def servers():
 
 @root.route('player/<string:name>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': desc})
 @root.route('player/<string:name>/<int:page>/<string:sortby>/<string:sortdir>/')
-@root.route('player/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': desc})
+@root.route('player/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': asc})
 @root.route('player/<string:name>/<int:page>/', defaults={'sortby': 'date', 'sortdir': desc})
 def player(page, name, sortby, sortdir):
     """Show records and stats for a single player"""
@@ -57,10 +57,16 @@ def player(page, name, sortby, sortdir):
                            reverse_sortdir_on=sortby)
 
 
-@root.route('players/', defaults={'page': 1})
-@root.route('players/<int:page>/')
-def players(page):
+@root.route('players/', defaults={'page': 1, 'sortby': 'name', 'sortdir': asc})
+@root.route('players/<int:page>/', defaults={'sortby': 'name', 'sortdir': asc})
+@root.route('players/<int:page>/<string:sortby>/<string:sortdir>/')
+@root.route('players/<int:page>/<string:sortby>/', defaults={'sortdir': asc})
+def players(page, sortby, sortdir):
     """Show a list of all players and their number of records and world records."""
+    if sortdir == 'asc':
+        sortdir = asc
+    else:
+        sortdir = desc
     # subquery to get all record ranks per player
     sq = db.session.query(Player.id.label('id'),
                           func.rank().over(
@@ -90,11 +96,13 @@ def players(page):
                                   sq3.c.record_count.label('record_count')).\
         outerjoin(sq2, sq2.c.id == Player.id).\
         join(sq3, sq3.c.id == Player.id).\
-        order_by(Player.name).\
+        order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('players.html',
                            title='Players',
-                           pagination=pagination)
+                           pagination=pagination,
+                           sortdir=sortdir.__name__,
+                           reverse_sortdir_on=sortby)
 
 
 @root.route('records/', defaults={'page': 1})
