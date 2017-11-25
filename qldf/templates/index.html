@@ -1,8 +1,7 @@
-{% from "jinja_macros.html" import render_form %}
 {% extends "base.html" %}
 {% block content %}
+{% from "macros.html" import render_form %}
 {{ render_form(search_form) }}
-
 Recent Records
 <table>
     <tr>
@@ -24,10 +23,6 @@ Recent Records
     </tr>
     {% endfor %}
 </table>
-
-
-
-
 Recent World Records
 <table>
     <tr>

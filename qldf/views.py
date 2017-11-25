@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, session, url_for, g, request, current_app
+from flask import Blueprint, render_template, session, url_for, g, request, current_app, redirect
 from time import time
 from .models import Player, Record, Map
-from .forms import SearchForm, SEARCH_TYPES
-from sqlalchemy import func, desc, asc
+from .forms import SearchForm
+from sqlalchemy import func, desc, asc, literal
 from qldf import db
 
 root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', static_folder='static')
@@ -12,13 +12,9 @@ root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', 
 def index():
     # Add search form
     search_form = SearchForm()
-    if search_form.validate_on_submit() and search_form.search_data:
-        # Do a search
-        search_string = search_form.search_string.data
-        search_type = search_form.search_type.data
-        if search_type == SEARCH_TYPES[0]:
-            search_results = db.session.query(Player.id,
-                                              Player.name)
+    if search_form.validate_on_submit() and search_form.search.data:
+        # redirect to search results if search was made
+        return redirect(url_for('root.search', search_string=search_form.search_string.data))
     # Get rows of recent records
     recent_records = db.session.query(Record.mode,
                                       Map.name.label('map_name'),
@@ -243,6 +239,31 @@ def maps(page, sortby, sortdir):
                            pagination=pagination,
                            sortdir=sortdir.__name__,
                            reverse_sortdir_on=sortby)
+
+
+@root.route('search/', defaults={'page': 1, 'search_string': ''})
+@root.route('search/<string:search_string>/<int:page>')
+@root.route('search/<string:search_string>/', defaults={'page': 1})
+def search(page, search_string):
+    # subquery with player names
+    sq = db.session.query(Player.id.label('id'),
+                          Player.steam_id.label('steam_id'),
+                          Player.name.label('name'),
+                          literal('player').label('type')).\
+        filter(Player.name.ilike(f'%{search_string}%'))
+    # subquery with map names
+    sq2 = db.session.query(Map.id.label('id'),
+                           literal('').label('steam_id'),
+                           Map.name.label('name'),
+                           literal('map').label('type')).\
+        filter(Map.name.ilike(f'%{search_string}%'))
+
+    pagination = sq.union(sq2).\
+        paginate(page, current_app.config['SEARCH_RESULTS_PER_PAGE'], True)
+    return render_template('search.html',
+                           title='Search',
+                           pagination=pagination,
+                           search_string=search_string)
 
 
 @root.route('api/')

@@ -21,6 +21,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Pagination settings
 ROWS_PER_PAGE = 20
+SEARCH_RESULTS_PER_PAGE = 20
 
 # Number of rows to show on the index page recent tables
 NUM_RECENT_RECORDS = 25
