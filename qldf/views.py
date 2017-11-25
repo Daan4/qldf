@@ -17,10 +17,10 @@ def servers():
     return render_template('servers.html')
 
 
-@root.route('player/<string:name>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': desc})
+@root.route('player/<string:name>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': 'desc'})
 @root.route('player/<string:name>/<int:page>/<string:sortby>/<string:sortdir>/')
-@root.route('player/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': asc})
-@root.route('player/<string:name>/<int:page>/', defaults={'sortby': 'date', 'sortdir': desc})
+@root.route('player/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
+@root.route('player/<string:name>/<int:page>/', defaults={'sortby': 'date', 'sortdir': 'desc'})
 def player(page, name, sortby, sortdir):
     """Show records and stats for a single player"""
     if sortdir == 'asc':
@@ -57,10 +57,10 @@ def player(page, name, sortby, sortdir):
                            reverse_sortdir_on=sortby)
 
 
-@root.route('players/', defaults={'page': 1, 'sortby': 'name', 'sortdir': asc})
-@root.route('players/<int:page>/', defaults={'sortby': 'name', 'sortdir': asc})
+@root.route('players/', defaults={'page': 1, 'sortby': 'name', 'sortdir': 'asc'})
+@root.route('players/<int:page>/', defaults={'sortby': 'name', 'sortdir': 'asc'})
 @root.route('players/<int:page>/<string:sortby>/<string:sortdir>/')
-@root.route('players/<int:page>/<string:sortby>/', defaults={'sortdir': asc})
+@root.route('players/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
 def players(page, sortby, sortdir):
     """Show a list of all players and their number of records and world records."""
     if sortdir == 'asc':
@@ -105,9 +105,15 @@ def players(page, sortby, sortdir):
                            reverse_sortdir_on=sortby)
 
 
-@root.route('records/', defaults={'page': 1})
-@root.route('records/<int:page>/')
-def records(page):
+@root.route('records/', defaults={'page': 1, 'sortby': 'date', 'sortdir': 'desc'})
+@root.route('records/<int:page>/', defaults={'sortby': 'date', 'sortdir': 'desc'})
+@root.route('records/<int:page>/<string:sortby>/<string:sortdir>/')
+@root.route('records/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
+def records(page, sortby, sortdir):
+    if sortdir == 'asc':
+        sortdir = asc
+    else:
+        sortdir = desc
     pagination = db.session.query(Record.mode,
                                   Record.time,
                                   Record.date,
@@ -118,11 +124,13 @@ def records(page):
                                       partition_by=(Record.map_id, Record.mode)
                                   ).label('rank')).\
         join(Player, Map).\
-        order_by(desc(Record.date)).\
+        order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('records.html',
                            title='Records',
-                           pagination=pagination)
+                           pagination=pagination,
+                           sortdir=sortdir.__name__,
+                           reverse_sortdir_on=sortby)
 
 
 @root.route('map/<string:name>/', defaults={'page': 1})
