@@ -11,8 +11,8 @@ if response.lower() == 'y':
     app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
     with app.app_context():
         from qldf.models import Map, Player, Record, WorkshopItem
-        Map.query.delete()
-        Player.query.delete()
         Record.query.delete()
+        Player.query.delete()
+        Map.query.delete()
         WorkshopItem.query.delete()
         db.session.commit()
