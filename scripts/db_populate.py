@@ -149,7 +149,7 @@ with app.app_context():
     # Create workshop items
 # Update workshop items by calling db_update_workshopitems.
 if not(len(sys.argv) >= 2 and sys.argv[1] == 'noupdate'):
-    subprocess.call(['python', 'db_update_workshopitems.py'])
+    subprocess.call(['python', 'db_update_workshopitems.py', 'fromcache'])
 else:
     print('noupdate -- not updating workshop items')
 print('DB populated')
