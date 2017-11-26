@@ -2,7 +2,6 @@ from qldf import db
 from flask import flash
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.orm.exc import UnmappedInstanceError
-from sqlalchemy import func
 
 
 class BaseModel(db.Model):
@@ -44,8 +43,8 @@ class BaseModel(db.Model):
 
 class Player(BaseModel):
     __tablename__ = 'player'
-    name = db.Column(db.Text)
-    steam_id = db.Column(db.Text, unique=True)
+    name = db.Column(db.Text, nullable=False)
+    steam_id = db.Column(db.Text, unique=True, nullable=False)
     records = db.relationship('Record', backref='player', lazy=True)
 
     def __repr__(self):
@@ -54,12 +53,12 @@ class Player(BaseModel):
 
 class Record(BaseModel):
     __tablename__ = 'record'
-    mode = db.Column(db.Integer)
-    map_id = db.Column(db.Integer, db.ForeignKey('map.id'), index=True)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), index=True)
-    time = db.Column(db.Integer)
-    match_guid = db.Column(db.Text)
-    date = db.Column(db.DateTime)
+    mode = db.Column(db.Integer, nullable=False)
+    map_id = db.Column(db.Integer, db.ForeignKey('map.id'), index=True, nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), index=True, nullable=False)
+    time = db.Column(db.Integer, nullable=False)
+    match_guid = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
         return f'<Record {self.id}>'
@@ -67,18 +66,27 @@ class Record(BaseModel):
 
 class Map(BaseModel):
     __tablename__ = 'map'
-    name = db.Column(db.Text)
-    author = db.Column(db.Text)
-    workshop_url = db.Column(db.Text)
+    name = db.Column(db.Text, nullable=False)
     records = db.relationship('Record', backref='map', lazy=True)
+    workshop_item_id = db.Column(db.Integer, db.ForeignKey('workshop_item.id'), index=True)
 
     def __repr__(self):
         return f'<Map {self.id}>'
 
 
-# Indices
-# db.Index('ix_record_rank_on_map_and_mode',
-#          func.rank().over(
-#              order_by=Record.time,
-#              partition_by=(Record.map_id, Record.mode)
-#          ))
+class WorkshopItem(BaseModel):
+    __tablename__ = 'workshop_item'
+    item_id = db.Column(db.Text, unique=True, nullable=False)
+    name = db.Column(db.Text)
+    author_steam_id = db.Column(db.Text)
+    description = db.Column(db.Text)
+    date = db.Column(db.DateTime)
+    size = db.Column(db.Float)
+    num_comments = db.Column(db.Integer)
+    score = db.Column(db.Integer)
+    num_scores = db.Column(db.Integer)
+    preview_url = db.Column(db.Text)
+    maps = db.relationship('Map', backref='workshop_item', lazy=True)
+
+    def __repr__(self):
+        return f'<WorkshopItem {self.id}>'
