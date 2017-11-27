@@ -55,7 +55,7 @@ def format_workshop_url(item_id):
 def format_profile_url(steam_id):
     """Turn a steam64 id into a steam profile link"""
     base_url = current_app.config['STEAMPLAYER_PROFILE_URL']
-    return do_mark_safe(f"<a href=\"{base_url}{steam_id}\">links</a>")
+    return do_mark_safe(f"<a href=\"{base_url}{steam_id}\">link</a>")
 
 
 def format_player_name(name, steam_id):
