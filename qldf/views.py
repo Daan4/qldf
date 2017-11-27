@@ -197,10 +197,9 @@ def _map(page, name, sortby, sortdir):
     else:
         sortdir = desc
     # Get data for map
-    workshop_item_base_url = current_app.config['STEAMWORKSHOP_ITEM_URL']
     map_data = db.session.query(Map.id.label('map_id'),
                                 Map.name.label('map_name'),
-                                func.concat(workshop_item_base_url, WorkshopItem.item_id).label('map_url'),
+                                WorkshopItem.item_id,
                                 WorkshopItem.name.label('item_name'),
                                 WorkshopItem.author_steam_id,
                                 WorkshopItem.description,
@@ -210,7 +209,7 @@ def _map(page, name, sortby, sortdir):
                                 WorkshopItem.score,
                                 WorkshopItem.num_scores,
                                 WorkshopItem.preview_url).\
-        join(WorkshopItem).\
+        outerjoin(WorkshopItem).\
         filter(Map.name == name).\
         first()
     # Get records for map
@@ -236,21 +235,23 @@ def _map(page, name, sortby, sortdir):
                            map_data=map_data)
 
 
-@root.route('maps/', defaults={'page': 1, 'sortby': 'name', 'sortdir': 'asc'})
-@root.route('maps/<int:page>/', defaults={'sortby': 'name', 'sortdir': 'asc'})
+@root.route('maps/', defaults={'page': 1, 'sortby': 'map_name', 'sortdir': 'asc'})
+@root.route('maps/<int:page>/', defaults={'sortby': 'map_name', 'sortdir': 'asc'})
 @root.route('maps/<int:page>/<string:sortby>/<string:sortdir>/')
 @root.route('maps/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
 def maps(page, sortby, sortdir):
+    """Show a list of maps and the number of records on it as well as a workshop url."""
     if sortdir == 'asc':
         sortdir = asc
     else:
         sortdir = desc
-    """Show a list of maps and the number of records on it"""
     pagination = db.session.query(Map.id,
-                                  Map.name,
-                                  func.count(Map.id).label('record_count')).\
+                                  Map.name.label('map_name'),
+                                  func.count(Map.id).label('record_count'),
+                                  WorkshopItem.item_id).\
         join(Map.records).\
-        group_by(Map.id).\
+        outerjoin(WorkshopItem).\
+        group_by(Map.id, WorkshopItem.item_id).\
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     return render_template('maps.html',

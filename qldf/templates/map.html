@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-Map data
+Map data<br/>
 Name: {{ map_data.map_name }}<br/>
+{% if map_data.item_id %}
 Workshop item link: {{ map_data.item_id | format_workshop_url }}<br/>
 Workshop item name: {{ name }}<br/>
 Workshop item author: {{ map_data.author_steam_id | format_profile_url }}<br/>
-Workshop item description: {{ map_data.description }}<br/>
+Workshop item description: {{ map_data.description | print_newlines }}<br/>
 Workshop item upload date: {{ map_data.date | format_record_date }}<br/>
 Workshop item filesize: {{ map_data.size }} MB<br/>
 Workshop item comment count: {{ map_data.num_comments }}<br/>
 Workshop item rating: {{ map_data.score }}<br/>
 Workshop item rating count: {{ map_data.num_scores }}<br/>
 Workshop item preview image: <img src="{{ map_data.preview_url }}"/><br/>
+{% endif %}
 Records
 <table>
     <tr>
