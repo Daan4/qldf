@@ -43,7 +43,9 @@
         {% endfor %}
     </ul>
     {% from "macros.html" import render_form %}
+    {% if g.search_form %}
     {{ render_form(g.search_form) }}
+    {% endif %}
     <br><hr>
     {% with messages = get_flashed_messages() %}
         {% if messages %}

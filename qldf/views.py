@@ -14,6 +14,7 @@ def search_form(wrapped_function, *args, **kwargs):
     Requires methods GET and POST enabled"""
     @wraps(wrapped_function)
     def wrapper(*args, **kwargs):
+        g.search_form = SearchForm()
         if g.search_form.validate_on_submit() and g.search_form.search.data:
             # redirect to search results if search was made
             return redirect(url_for('root.search', search_string=g.search_form.search_string.data))
@@ -311,9 +312,6 @@ def api():
 def before_request():
     # Save current time. Used to time request duration.
     g.start_time = time()
-    # Set up the search form for every request
-    # Every page that inherits from base.html has the search form
-    g.search_form = SearchForm()
 
 
 @root.after_app_request
