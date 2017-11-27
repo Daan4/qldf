@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from xml.etree.ElementTree import fromstring, ElementTree
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timedelta
 sys.path.insert(0, os.path.abspath('..'))
 from qldf import db, create_app
 from qldf.models import WorkshopItem
@@ -84,7 +84,7 @@ else:
         # find item description
         description = soup.find('div', {'class': 'workshopItemDescription'})
         if description:
-            description = description.text
+            description = description.get_text(separator='\n')
         # find item date and size
         div = soup.find('div', {'class': 'detailsStatsContainerRight'})
         subdivs = div.find_all('div', {'class': 'detailsStatRight'})
@@ -96,6 +96,8 @@ else:
         else:
             date = datetime.strptime(date_text, '%d %b @ %I:%M%p')
             date = date.replace(year=datetime.now().year)
+        # Default steam time seems to be UTC-8 ->  add 8 hours to get UTC time to store
+        date += timedelta(hours=8)
         date = date.isoformat()
         # find item num comments
         num_comments = soup.find_all('span', {'class': 'tabCount'})[1]
@@ -110,7 +112,7 @@ else:
         div = soup.find('div', {'class': 'fileRatingDetails'})
         score_image_url = div.find_next('img')['src']
         score_image_filename = urlparse(score_image_url).path.split('/')[-1]
-        score = None
+        score = 0
         for i in range(5):
             if str(i) in score_image_filename:
                 score = i
