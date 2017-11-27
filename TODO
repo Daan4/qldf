@@ -4,12 +4,18 @@ show local times
 
 db performance: caching and indexing
 
-move queries to models?
+move queries to models? maybe
 
 create api blueprint to accept new times and allow users to get data
 
 stats page
 
-link maps to steam workshop
-
 server browser
+
+add workshopitem and player profile urls to search results  / player page
+
+add update functions to players / maps / workshopitem models to update data from steam regularly
+(eg when requested and last refresh longer than xxxx time ago)
+Also check for workshopitem when adding a new map,
+
+write sorting boilerplate as a decorator?
