@@ -11,11 +11,12 @@ from qldf import create_app, db
 import json
 import os
 import subprocess
+from config import heroku_config
 
 
 # When deploying on heroku, limit the number of data rows. Max 10k rows allowed for free.
 if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.heroku_config':
-    map_limit = 10
+    map_limit = heroku_config.MAP_LIMIT
 else:
     map_limit = None
 
@@ -88,7 +89,7 @@ print('Getting workshop item ids for maps')
 # Get workshop item ids for maps from cache or by searching the steam workshop for map names
 maps_with_workshop_ids = get_data_from_cache('map_ids.txt')
 if not maps_with_workshop_ids:
-    subprocess.call(['python', 'scripts/get_map_workshop_ids.py', 'fromcache'])
+    subprocess.call(['python', 'get_map_workshop_ids.py', 'fromcache'])
     maps_with_workshop_ids = get_data_from_cache('map_ids.txt')
 
 # Insert data into database

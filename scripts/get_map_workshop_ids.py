@@ -26,7 +26,7 @@ def get_html_from_url(url):
 if len(sys.argv) >= 2 and sys.argv[1] == 'fromcache':
     with open('tmp/maps.txt', 'r') as f:
         maps = json.load(f)
-    maps = {map: None for _map in maps}
+    maps = {_map: None for _map in maps}
 else:
     # Otherwise load maps from the database
     app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
@@ -51,7 +51,7 @@ for _map, workshop_id in maps.items():
         else:
             # No search results
             maps[_map] = None
-    print(f'{maps[_map]}:{workshop_id}')
+    print(f'{_map}:{workshop_id}')
 
 # Save to tmp folder
 if not os.path.exists('tmp/'):
