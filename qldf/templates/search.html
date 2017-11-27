@@ -3,17 +3,20 @@
 Search results
 <table>
     <tr>
-        <th>Name</th>
         <th>Type</th>
+        <th>Name</th>
+        <th>Steam Profile / Item url</th>
     </tr>
     {% for row in pagination.items %}
     <tr>
+        <td>{{ row.type }}</td>
         {% if row.type == 'player' %}
         <td>{{ row.name | format_player_name(row.steam_id) }}</td>
+        <td>{{ row.steam_id | format_profile_url }}</td>
         {% elif row.type == 'map' %}
         <td>{{ row.name | format_map_name }}</td>
+        <td>{{ row.steam_id | format_workshop_url }}</td>
         {% endif %}
-        <td>{{ row.type }}</td>
     </tr>
     {% endfor %}
 </table>

@@ -273,11 +273,11 @@ def search(page, search_string):
         filter(Player.name.ilike(f'%{search_string}%'))
     # subquery with map names
     sq2 = db.session.query(Map.id.label('id'),
-                           literal('').label('steam_id'),
+                           WorkshopItem.item_id.label('steam_id'),
                            Map.name.label('name'),
                            literal('map').label('type')).\
+        outerjoin(WorkshopItem).\
         filter(Map.name.ilike(f'%{search_string}%'))
-
     pagination = sq.union(sq2).\
         paginate(page, current_app.config['SEARCH_RESULTS_PER_PAGE'], True)
     return render_template('search.html',
