@@ -28,6 +28,12 @@ NUM_RECENT_RECORDS = 25
 NUM_RECENT_MAPS = 25
 NUM_RECENT_WORLD_RECORDS = 25
 
+# Steam base URLs
+STEAMWORKSHOP_ITEM_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id="
+
+# Limits the # of maps the database gets populated with
+MAP_LIMIT = 20
+
 # Record physics modes
 RECORD_MODES = ['PQL Weapons',
                 'PQL Strafe',
