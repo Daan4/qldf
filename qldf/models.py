@@ -66,7 +66,7 @@ class Record(BaseModel):
 
 class Map(BaseModel):
     __tablename__ = 'map'
-    name = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False, unique=True)
     records = db.relationship('Record', backref='map', lazy=True)
     workshop_item_id = db.Column(db.Integer, db.ForeignKey('workshop_item.id'), index=True)
 
