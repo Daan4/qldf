@@ -13,6 +13,7 @@ def setup_custom_jinja_filters(app):
     app.jinja_env.filters['format_sortable_table_header'] = format_sortable_table_header
     app.jinja_env.filters['format_workshop_url'] = format_workshop_url
     app.jinja_env.filters['format_profile_url'] = format_profile_url
+    app.jinja_env.filters['print_newlines'] = print_newlines
 
 
 def format_record_mode(mode):
@@ -65,6 +66,11 @@ def format_player_name(name, steam_id):
 def format_map_name(name):
     """Turn a map name into a url to /map/<name>"""
     return do_mark_safe(f"<a href=\"{url_for('root._map', name=name)}\">{name}</a>")
+
+
+def print_newlines(string):
+    """Print \n in string as newlines."""
+    return do_mark_safe(string.replace('\n', '<br/>'))
 
 
 def format_sortable_table_header(header, sortby, sortdir, reverse_sortdir_on, **kwargs):
