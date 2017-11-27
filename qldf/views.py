@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, url_for, g, request, current_app, redirect
 from time import time
-from .models import Player, Record, Map
+from .models import Player, Record, Map, WorkshopItem
 from .forms import SearchForm
 from sqlalchemy import func, desc, asc, literal
 from qldf import db
@@ -191,11 +191,29 @@ def records(page, sortby, sortdir):
 @root.route('map/<string:name>/<int:page>/<string:sortby>/<string:sortdir>/')
 @root.route('map/<string:name>/<int:page>/<string:sortby>/', defaults={'sortdir': 'asc'})
 def _map(page, name, sortby, sortdir):
-    """Show records on a single map."""
+    """Show records and data for a single map."""
     if sortdir == 'asc':
         sortdir = asc
     else:
         sortdir = desc
+    # Get data for map
+    workshop_item_base_url = current_app.config['STEAMWORKSHOP_ITEM_URL']
+    map_data = db.session.query(Map.id.label('map_id'),
+                                Map.name.label('map_name'),
+                                func.concat(workshop_item_base_url, WorkshopItem.item_id).label('map_url'),
+                                WorkshopItem.name.label('item_name'),
+                                WorkshopItem.author_steam_id,
+                                WorkshopItem.description,
+                                WorkshopItem.date,
+                                WorkshopItem.size,
+                                WorkshopItem.num_comments,
+                                WorkshopItem.score,
+                                WorkshopItem.num_scores,
+                                WorkshopItem.preview_url).\
+        join(WorkshopItem).\
+        filter(Map.name == name).\
+        first()
+    # Get records for map
     pagination = db.session.query(Record.mode,
                                   Record.time,
                                   Record.date,
@@ -214,7 +232,8 @@ def _map(page, name, sortby, sortdir):
                            name=name,
                            pagination=pagination,
                            sortdir=sortdir.__name__,
-                           reverse_sortdir_on=sortby)
+                           reverse_sortdir_on=sortby,
+                           map_data=map_data)
 
 
 @root.route('maps/', defaults={'page': 1, 'sortby': 'name', 'sortdir': 'asc'})
