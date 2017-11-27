@@ -303,11 +303,6 @@ def search(page, search_string):
                            search_string=search_string)
 
 
-@root.route('api/')
-def api():
-    pass
-
-
 @root.before_app_request
 def before_request():
     # Save current time. Used to time request duration.
