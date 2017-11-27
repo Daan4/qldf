@@ -2,11 +2,11 @@
 {% block content %}
 Map data
 Name: {{ map_data.map_name }}<br/>
-Workshop item link: <a href="{{ map_data.map_url }}">link</a><br/>
+Workshop item link: {{ map_data.item_id | format_workshop_url }}<br/>
 Workshop item name: {{ name }}<br/>
-Workshop item author: {{ map_data.author_steam_id }}<br/>
+Workshop item author: {{ map_data.author_steam_id | format_profile_url }}<br/>
 Workshop item description: {{ map_data.description }}<br/>
-Workshop item upload date: {{ map_data.date }}<br/>
+Workshop item upload date: {{ map_data.date | format_record_date }}<br/>
 Workshop item filesize: {{ map_data.size }} MB<br/>
 Workshop item comment count: {{ map_data.num_comments }}<br/>
 Workshop item rating: {{ map_data.score }}<br/>

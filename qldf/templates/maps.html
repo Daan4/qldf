@@ -3,13 +3,15 @@
     Maps
 <table>
     <tr>
-        <th>{{ 'Name' | format_sortable_table_header('name', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
+        <th>{{ 'Name' | format_sortable_table_header('map_name', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
         <th>{{ 'Records' | format_sortable_table_header('record_count', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
+        <th>Steam Workshop URL</th>
     </tr>
     {% for row in pagination.items %}
     <tr>
-        <td>{{ row.name | format_map_name }}</td>
+        <td>{{ row.map_name | format_map_name }}</td>
         <td>{{ row.record_count }}</td>
+        <td>{{ row.item_id | format_workshop_url }}</td>
     </tr>
     {% endfor %}
 </table>
