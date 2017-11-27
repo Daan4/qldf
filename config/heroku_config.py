@@ -29,7 +29,10 @@ NUM_RECENT_MAPS = 25
 NUM_RECENT_WORLD_RECORDS = 25
 
 # Steam base URLs
+# Append the workshop item id
 STEAMWORKSHOP_ITEM_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id="
+# Append player steamID64
+STEAMPLAYER_PROFILE_URL = "https://steamcommunity.com/profiles/"
 
 # Limits the # of maps the database gets populated with
 MAP_LIMIT = 20
