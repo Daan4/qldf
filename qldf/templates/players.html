@@ -6,14 +6,14 @@ Players
         <th>{{ 'Name' | format_sortable_table_header('name', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
         <th>{{ 'World Records' | format_sortable_table_header('wr_count', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
         <th>{{ 'Records' | format_sortable_table_header('record_count', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
-        <th>{{ 'Steam ID' | format_sortable_table_header('steam_id', sortdir, reverse_sortdir_on, page=pagination.page) }}</th>
+        <td>Steam Profile</td>
     </tr>
     {% for row in pagination.items %}
     <tr>
         <td>{{ row.name | format_player_name(row.steam_id) }}</td>
         <td>{{ row.wr_count }}</td>
         <td>{{ row.record_count }}</td>
-        <td>{{ row.steam_id }}</td>
+        <td>{{ row.steam_id | format_profile_url }}</td>
     </tr>
     {% endfor %}
 </table>
