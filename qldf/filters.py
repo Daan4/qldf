@@ -11,6 +11,8 @@ def setup_custom_jinja_filters(app):
     app.jinja_env.filters['format_player_name'] = format_player_name
     app.jinja_env.filters['format_map_name'] = format_map_name
     app.jinja_env.filters['format_sortable_table_header'] = format_sortable_table_header
+    app.jinja_env.filters['format_workshop_url'] = format_workshop_url
+    app.jinja_env.filters['format_profile_url'] = format_profile_url
 
 
 def format_record_mode(mode):
@@ -38,6 +40,21 @@ def format_record_date(date):
         return date.strftime('%Y-%m-%d %H:%M:%S UTC')
     else:
         return '-'
+
+
+def format_workshop_url(item_id):
+    """Turn a steam workshop item id into a workshop item link"""
+    if not item_id:
+        return '-'
+    else:
+        base_url = current_app.config['STEAMWORKSHOP_ITEM_URL']
+        return do_mark_safe(f"<a href=\"{base_url}{item_id}\">link</a>")
+
+
+def format_profile_url(steam_id):
+    """Turn a steam64 id into a steam profile link"""
+    base_url = current_app.config['STEAMPLAYER_PROFILE_URL']
+    return do_mark_safe(f"<a href=\"{base_url}{steam_id}\">links</a>")
 
 
 def format_player_name(name, steam_id):
