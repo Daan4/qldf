@@ -21,6 +21,12 @@ def create_app(config):
     db.app = app
     # Setup navigation
     setup_navigation(app)
+    # Run tasks on startup if needed
+    if app.config['RUN_TASKS_ON_STARTUP']:
+        from qldf.tasks import update_servers, update_players, update_workshop_items
+        update_players()
+        #update_workshop_items()
+        #update_servers()
     # Setup and start apscheduler
     scheduler = APScheduler()
     scheduler.init_app(app)
@@ -53,36 +59,14 @@ def setup_navigation(app):
 
 def setup_logging(app):
     import logging
-    # Log via email
-    if not app.debug:
-        from logging.handlers import SMTPHandler
-        credentials = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        mail_handler = SMTPHandler((app.config['MAIL_SERVER'], app.config['MAIL_PORT']), 'no-reply@' + app.config['MAIL_SERVER'], app.config['ADMINS'], 'www.qldf.com failure', credentials)
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
     from logging.handlers import RotatingFileHandler
-
-    class DebugRotatingFileHandler(RotatingFileHandler):
-        def __init__(self, filename, mode='a', max_bytes=0, backup_count=0, encoding=None, delay=False):
-            RotatingFileHandler.__init__(self, filename, mode, max_bytes, backup_count, encoding, delay)
-
-        def emit(self, record):
-            if record.levelno != logging.DEBUG:
-                return
-            RotatingFileHandler.emit(self, record)
     # Log via files
     # INFO or higher
-    # Don't create logging directory and files when run from a different folder
     logfolder = os.path.join(os.path.dirname(__file__), '..', 'logs')
     if not os.path.exists(os.path.dirname(logfolder)):
         os.mkdir(logfolder)
     file_handler = RotatingFileHandler(os.path.join(logfolder, app.config['LOG_INFO_FILENAME']), 'a', 1 * 1024 * 1024, 10)
     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s in %(pathname)s:%(lineno)d'))
-    app.logger.setLevel(logging.DEBUG)
+    app.logger.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
-    # DEBUG only
-    file_handler = DebugRotatingFileHandler(os.path.join(logfolder, app.config['LOG_DEBUG_FILENAME']), 'a', 1 * 1024 * 1024, 10)
-    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d'))
-    file_handler.setLevel(logging.DEBUG)
     app.logger.addHandler(file_handler)
