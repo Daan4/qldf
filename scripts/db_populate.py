@@ -13,6 +13,9 @@ import os
 import subprocess
 from config import heroku_config
 
+# Get absolute dir for calling subprocesses
+scripts_dir = os.path.dirname(__file__)
+
 
 # When deploying on heroku, limit the number of data rows. Max 10k rows allowed for free.
 if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.heroku_config':
@@ -89,7 +92,7 @@ print('Getting workshop item ids for maps')
 # Get workshop item ids for maps from cache or by searching the steam workshop for map names
 maps_with_workshop_ids = get_data_from_cache('map_ids.txt')
 if not maps_with_workshop_ids:
-    subprocess.call(['python', 'get_map_workshop_ids.py', 'fromcache'])
+    subprocess.call(['python', f'{scripts_dir}/get_map_workshop_ids.py', 'fromcache'])
     maps_with_workshop_ids = get_data_from_cache('map_ids.txt')
 
 # Insert data into database
@@ -150,7 +153,7 @@ with app.app_context():
     # Create workshop items
 # Update workshop items by calling db_update_workshopitems.
 if not(len(sys.argv) >= 2 and sys.argv[1] == 'noupdate'):
-    subprocess.call(['python', 'db_update_workshopitems.py', 'fromcache'])
+    subprocess.call(['python', f'{scripts_dir}/db_update_workshopitems.py', 'fromcache'])
 else:
     print('noupdate -- not updating workshop items')
 print('DB populated')
