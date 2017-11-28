@@ -2,13 +2,25 @@ from qldf import db
 from flask import flash
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.orm.exc import UnmappedInstanceError
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import DateTime
+
+
+class utcnow(expression.FunctionElement):
+    type = DateTime()
+
+
+@compiles(utcnow, 'postgresql')
+def pg_utcnow(element, compiler, **kw):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
 
 
 class BaseModel(db.Model):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True, index=True)
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp().op('AT TIME ZONE')('UTC'))
-    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp().op('AT TIME ZONE')('UTC'), onupdate=db.func.current_timestamp())
+    date_created = db.Column(db.DateTime, default=utcnow())
+    date_modified = db.Column(db.DateTime, default=utcnow(), onupdate=utcnow())
 
     @classmethod
     def create(cls, success_msg=None, failure_msg=None, **kwargs):
