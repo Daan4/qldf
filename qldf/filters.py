@@ -1,7 +1,7 @@
 """Custom jinja filters"""
 from flask import url_for, current_app, request
 from jinja2.filters import do_mark_safe
-from sqlalchemy import asc, desc
+import re
 
 
 def setup_custom_jinja_filters(app):
@@ -15,6 +15,8 @@ def setup_custom_jinja_filters(app):
     app.jinja_env.filters['format_profile_url'] = format_profile_url
     app.jinja_env.filters['print_newlines'] = print_newlines
     app.jinja_env.filters['format_players'] = format_players
+    app.jinja_env.filters['format_server'] = format_server
+    app.jinja_env.filters['strip_colors'] = strip_colors
 
 
 def format_players(players):
@@ -29,7 +31,7 @@ def format_players(players):
                 player['score'] = '-'
             else:
                 player['score'] = format_record_time(player['score'])
-            html_output += f"<tr><td>{player['name']}</td><td>{player['score']}</td><td>{player['totalConnected']}</td></tr>"
+            html_output += f"<tr><td>{strip_colors(player['name'])}</td><td>{player['score']}</td><td>{player['totalConnected']}</td></tr>"
         html_output += '</table>'
     else:
         html_output = ''
@@ -83,9 +85,14 @@ def format_player_name(name, steam_id):
     return do_mark_safe(f"<a href=\"{url_for('root.player', steam_id=steam_id)}\">{name}</a>")
 
 
-def format_colored_player_name(name):
-    """Turn a name with quake colors (^1) to a html colored name"""
-    pass
+def strip_colors(name):
+    """Remove quake name colors from player name."""
+    return re.sub(r'\^[0-9]', '', name)
+
+
+def format_server(name, address):
+    """Turn a ql server ip address into a clickable link that launches ql and connects to the address"""
+    return do_mark_safe(f"<a href=\"steam://connect/{address}\">{name}</a>")
 
 
 def format_map_name(name):

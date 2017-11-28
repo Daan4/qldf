@@ -4,7 +4,6 @@ Server browser
 <table>
     <tr>
         <th>Name</th>
-        <th>Ip</th>
         <th>Country</th>
         <th>Map</th>
         <th>Playercount</th>
@@ -14,8 +13,7 @@ Server browser
     </tr>
     {% for server in servers %}
     <tr>
-        <td>{{ server.name }}</td>
-        <td>{{ server.address }}</td>
+        <td>{{ server.name | format_server(server.address) }}</td>
         <td>{{ server.country }}</td>
         <td>{{ server.map | format_map_name }}</td>
         <td>{{ players[server.server_id] | length }}/{{ server.max_players }}</td>
