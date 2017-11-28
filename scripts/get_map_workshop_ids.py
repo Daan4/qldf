@@ -5,7 +5,7 @@ fromcache -- load maps from tmp/maps.txt instead of the steam workshop
 """
 import sys
 import os
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from qldf import db, create_app
 from bs4 import BeautifulSoup
 import json

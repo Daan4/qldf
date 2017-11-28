@@ -9,7 +9,7 @@ from xml.etree.ElementTree import fromstring, ElementTree
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from qldf import db, create_app
 from qldf.root.models import WorkshopItem
 

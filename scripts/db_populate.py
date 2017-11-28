@@ -5,7 +5,7 @@ noupdate -- skips updating workshop items at end
 from urllib.request import Request, urlopen
 import sys
 import os
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from qldf.root.models import Record, Player, Map, WorkshopItem, Server
 from qldf import create_app, db
 import json
