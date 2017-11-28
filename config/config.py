@@ -3,6 +3,13 @@ from config import local_config as c
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
+# Flask settings
+DEBUG = True
+USE_RELOADER = False
+HOST = None  # Defaults
+PORT = None  # Defaults
+
 # Flask-SQLAlchemy settings
 DB_USERNAME = c.DB_USERNAME
 DB_PASSWORD = c.DB_PASSWORD
@@ -50,8 +57,6 @@ RECORD_MODES = ['PQL Weapons',
 
 # syncore api urls
 SYNCORE_SERVERS_URL = 'https://ql.syncore.org/api/servers'
-SYNCORE_QUERY_URL = 'https://ql.syncore.org/api/query'
-SYNCORE_SERVERIDS_URL = 'https://ql.syncore.org/api/serverIDs'
 
 # APScheduler tasks
 SCHEDULER_API_ENABLED = True
@@ -63,3 +68,7 @@ JOBS = [
         'seconds': c.UPDATE_SERVERS_INTERVAL
     }
 ]
+
+# Logging
+LOG_INFO_FILENAME = 'qldf_info.log'
+LOG_DEBUG_FILENAME = 'qldf_debug.log'
