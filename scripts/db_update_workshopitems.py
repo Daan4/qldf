@@ -91,11 +91,19 @@ else:
         size = subdivs[0].text.split(' ')[0]
         date_text = subdivs[1].text
         # Parse date text, assumed format 'dd nov @ 12:00am' or 'dd nov, yyyy @ 12:00am', where nov is a three day month
-        if ',' in date_text:
-            date = datetime.strptime(date_text, '%d %b, %Y @ %I:%M%p')
-        else:
-            date = datetime.strptime(date_text, '%d %b @ %I:%M%p')
-            date = date.replace(year=datetime.now().year)
+        try:
+            if ',' in date_text:
+                date = datetime.strptime(date_text, '%d %b, %Y @ %I:%M%p')
+            else:
+                date = datetime.strptime(date_text, '%d %b @ %I:%M%p')
+                date = date.replace(year=datetime.now().year)
+        except ValueError:
+            # When deploying on heroku date format is american ie Oct 20th instead of 20th oct
+            if ',' in date_text:
+                date = datetime.strptime(date_text, '%b %d, %Y @ %I:%M%p')
+            else:
+                date = datetime.strptime(date_text, '%b %d @ %I:%M%p')
+                date = date.replace(year=datetime.now().year)
         # Default steam time seems to be UTC-8 ->  add 8 hours to get UTC time to store
         date += timedelta(hours=8)
         date = date.isoformat()
