@@ -89,9 +89,42 @@ def servers():
             players[server.server_id] = sorted(players[server.server_id], key=lambda k: k['score'])
     # Sort servers by playercount
     _servers = sorted(_servers, key=lambda k: len(players[k.server_id]), reverse=True)
+    # Subquery to get all record ranks per map
+    map_names = list(set([x.map for x in _servers]))
+    sq = db.session.query(Map.name.label('map_name'),
+                          Record.mode,
+                          Record.date,
+                          Record.time,
+                          Player.name.label('player_name'),
+                          Player.steam_id,
+                          func.rank().over(
+                              order_by=Record.time,
+                              partition_by=(Record.map_id, Record.mode)
+                          ).label('rank')).\
+        join(Record, Player).\
+        filter(Map.name.in_(map_names)).\
+        subquery()
+    # Keep only the #1 ranks
+    world_records_unlinked = db.session.query(sq.c.map_name.label('map_name'),
+                                     sq.c.mode.label('mode'),
+                                     sq.c.date.label('date'),
+                                     sq.c.time.label('time'),
+                                     sq.c.player_name.label('player_name'),
+                                     sq.c.steam_id.label('steam_id'),
+                                     sq.c.rank.label('rank')).\
+        filter(sq.c.rank==1).all()
+    # Link world records to server_id by unique map names
+    world_records = {}
+    for _server in _servers:
+        world_records[_server.server_id] = []
+        for wr in world_records_unlinked:
+            if wr.map_name == _server.map:
+                world_records[_server.server_id].append(wr)
+
     return render_template('servers.html',
                            servers=_servers,
-                           players=players)
+                           players=players,
+                           world_records=world_records)
 
 
 @root.route('player/<string:steam_id>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': 'desc'}, methods=['GET', 'POST'])

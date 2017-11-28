@@ -17,6 +17,30 @@ def setup_custom_jinja_filters(app):
     app.jinja_env.filters['format_players'] = format_players
     app.jinja_env.filters['format_server'] = format_server
     app.jinja_env.filters['strip_colors'] = strip_colors
+    app.jinja_env.filters['format_server_wrs'] = format_server_wrs
+
+
+def format_server_wrs(world_records, server_id):
+    """Format the world records on the server browser to a table
+    world_records format: {server_id: [list of records]}
+            where every record is a tuple like {map_name, mode, date, time, player_name, steam_id, rank} accessible like sqlalchemy result"""
+    if world_records[server_id]:
+        html_output = '<table><tr><th>Player</th><th>Mode</th><th>Time</th><th>Date</th></tr>'
+        for wr in world_records[server_id]:
+            # format time
+            time = format_record_time(wr.time)
+            # format date
+            date = format_record_date(wr.date)
+            # format player name
+            player_name = format_player_name(wr.player_name, wr.steam_id)
+            # format mode
+            mode = format_record_mode(wr.mode)
+            # create table row
+            html_output += f"<tr><td>{player_name}</td><td>{mode}</td><td>{time}</td><td>{date}</td></tr>"
+        html_output += '</table>'
+    else:
+        html_output = ''
+    return do_mark_safe(html_output)
 
 
 def format_players(players):

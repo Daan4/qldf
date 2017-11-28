@@ -6,6 +6,7 @@ Server browser
         <th>Name</th>
         <th>Country</th>
         <th>Map</th>
+        <th>World records</th>
         <th>Playercount</th>
         <th>Players</th>
         <th>Tags</th>
@@ -16,6 +17,7 @@ Server browser
         <td>{{ server.name | format_server(server.address) }}</td>
         <td>{{ server.country }}</td>
         <td>{{ server.map | format_map_name }}</td>
+        <td>{{ world_records | format_server_wrs(server.server_id) }}</td>
         <td>{{ players[server.server_id] | length }}/{{ server.max_players }}</td>
         <td>{{ players[server.server_id] | format_players }}</td>
         <td>{{ server.keywords }}</td>
