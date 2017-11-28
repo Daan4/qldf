@@ -4,14 +4,18 @@ show local times
 
 db performance: caching and indexing
 
-move queries to models? maybe
-
 implement api
 
 stats page
 
-
 add workshopitem and player profile urls to search results  / player page
 
-Add tasks to update map data and player data
+Implement tasks to update map data and player data
 Also check these things when adding new rows
+
+run tasks on startup by looping through JOBS instead
+
+Admin panel to flag cheated times and manually add workshop item ids
+
+Add player avatar to playeroverview
+Add last updated on times to relevant views
