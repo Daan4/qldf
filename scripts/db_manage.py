@@ -15,7 +15,7 @@ app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles
 from qldf.root.models import Map, Player, Record, Server
 
 # setup Flask-Migrate
-migrate = Migrate(app, db, directory=os.path.abspath('..\\migrations'))
+migrate = Migrate(app, db, directory=os.path.abspath('migrations'))
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
