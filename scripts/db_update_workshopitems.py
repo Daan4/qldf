@@ -1,21 +1,25 @@
 """Update each workshop item in the database by fetching data from the steam workshop.
 Arguments:
 fromcache -- try loading workshopitems from cache"""
-import sys
 import json
 import os
-from bs4 import BeautifulSoup
-from xml.etree.ElementTree import fromstring, ElementTree
-from urllib.request import Request, urlopen
-from urllib.parse import urlparse
+import sys
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
+from xml.etree.ElementTree import fromstring, ElementTree
+
+from bs4 import BeautifulSoup
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from qldf import db, create_app
-from qldf.root.models import WorkshopItem
+from qldf.models import WorkshopItem
 
 
 # Append the workshop item id
 WORKSHOP_ITEM_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id="
+
+workshopitems_cache_filepath = os.path.join(os.path.dirname(__file__), 'tmp/workshopitems.json')
 
 
 def get_html_from_url(url):
@@ -26,17 +30,17 @@ def get_html_from_url(url):
 
 
 print('DB: Update workshop item rows')
-# If script was started witha arg 'fromcache', try loading data from tmp/workshopitems.txt
+# If script was started witha arg 'fromcache', try loading data from cache
 fromcache = False
 if len(sys.argv) >= 2 and sys.argv[1] == 'fromcache':
     try:
-        with open('tmp/workshopitems.txt', 'r') as f:
+        with open(workshopitems_cache_filepath, 'r') as f:
             workshop_items = json.load(f)
         fromcache = True
     except FileNotFoundError:
         pass
 
-app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
+app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
 
 if fromcache:
     for _id, values_dict in workshop_items.items():
@@ -144,8 +148,8 @@ else:
         # Update dict
         workshop_items_dict[item.id].update(values_dict)
     # Write to cache
-    if not os.path.exists('tmp/'):
-        os.mkdir('tmp/')
-    with open(os.path.abspath('tmp/workshopitems.txt'), 'w+') as f:
+    if not os.path.exists(os.path.dirname(workshopitems_cache_filepath)):
+        os.mkdir(os.path.dirname(workshopitems_cache_filepath))
+    with open(os.path.abspath(workshopitems_cache_filepath), 'w+') as f:
         json.dump(workshop_items_dict, f)
 print('DB: workshop items updated')

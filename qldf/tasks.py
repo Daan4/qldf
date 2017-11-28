@@ -1,9 +1,11 @@
 """Background tasks to be run periodically or when invoked"""
-from urllib.request import Request, urlopen
-from flask import current_app
-from qldf import db
-from qldf.root.models import Server
 import json
+from urllib.request import Request, urlopen
+
+from flask import current_app
+
+from qldf import db
+from qldf.models import Server
 
 
 def get_data_from_url(url, params=None):
@@ -13,7 +15,7 @@ def get_data_from_url(url, params=None):
     url += '?'
     for key, value in params.items():
         url += str(key) + '=' + str(value) + '&'
-    if url[-1] == '&':
+    if url[-1] in '&?':
         url = url[:-1]
     req = Request(url)
     req.add_header('User-Agent', 'qldf.com worker')

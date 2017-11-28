@@ -1,7 +1,8 @@
 from flask import jsonify, Blueprint, render_template
-from qldf import db
-from qldf.root.models import Map, WorkshopItem
 from sqlalchemy import inspect
+
+from qldf import db
+from qldf.models import Map, WorkshopItem
 
 api = Blueprint('api', __name__, url_prefix='/api/', template_folder='templates')
 

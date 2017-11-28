@@ -1,16 +1,19 @@
 """
 Get steam workshop ids by map name for maps in the database
 Arguments:
-fromcache -- load maps from tmp/maps.txt instead of the steam workshop
+fromcache -- load maps from cache instead of the steam workshop
 """
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from qldf import db, create_app
 from bs4 import BeautifulSoup
 import json
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse, parse_qs
+
+maps_cache_filepath = os.path.join(os.path.dirname(__file__), 'tmp/maps.json')
 
 # Append the text to search for
 WORKSHOP_SEARCH_URL = "https://steamcommunity.com/workshop/browse/?appid=282440&searchtext="
@@ -22,16 +25,16 @@ def get_html_from_url(url):
     return urlopen(req).read().decode()
 
 
-# If script was started with arg 'fromcache', load maps from tmp/maps.txt
+# If script was started with arg 'fromcache', load maps from cache
 if len(sys.argv) >= 2 and sys.argv[1] == 'fromcache':
-    with open('tmp/maps.txt', 'r') as f:
+    with open(maps_cache_filepath, 'r') as f:
         maps = json.load(f)
     maps = {_map: None for _map in maps}
 else:
     # Otherwise load maps from the database
-    app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
+    app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
     with app.app_context():
-        from qldf.root.models import Map
+        from qldf.models import Map
         map_rows = db.session.query(Map).all()
         maps = {row.name: int(row.workshop_item_id) for row in map_rows}
 for _map, workshop_id in maps.items():
@@ -53,8 +56,8 @@ for _map, workshop_id in maps.items():
             maps[_map] = None
     print(f'{_map}:{workshop_id}')
 
-# Save to tmp folder
-if not os.path.exists('tmp/'):
-    os.mkdir('tmp/')
-with open(os.path.abspath('tmp/map_ids.txt'), 'w+') as f:
+# Save to cache
+if not os.path.exists(os.path.dirname(maps_cache_filepath)):
+    os.mkdir(os.path.dirname(maps_cache_filepath))
+with open(os.path.abspath(maps_cache_filepath), 'w+') as f:
     json.dump(maps, f)
