@@ -48,13 +48,13 @@ print('Getting map names')
 maps = get_data_from_cache('maps.txt')
 if not maps:
     maps = get_data_from_url('https://qlrace.com/api/maps')['maps']
+    # limit maps
+    if map_limit:
+        print(f'Maps limited to {map_limit}')
+        maps = maps[:map_limit]
     with open(os.path.abspath('tmp/maps.txt'), 'w+') as f:
         json.dump(maps, f)
 
-# limit maps
-if map_limit:
-    print(f'Maps limited to {map_limit}')
-    maps = maps[:map_limit]
 
 # For each map get the records, from cached file or the qlrace.com api
 print('Getting records')
