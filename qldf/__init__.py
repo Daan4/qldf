@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_navigation import Navigation
 from .filters import setup_custom_jinja_filters
-import qldf.api
 import os
 
 db = SQLAlchemy()
@@ -19,7 +18,7 @@ def create_app(config, create_logfiles=True):
     # Setup navigation
     setup_navigation(app)
     # Register blueprints
-    from qldf.views import root, setup_error_routing
+    from .root.views import root, setup_error_routing
     from .api.views import api
     app.register_blueprint(api)
     app.register_blueprint(root)
