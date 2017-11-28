@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_navigation import Navigation
 from .filters import setup_custom_jinja_filters
+from flask_apscheduler import APScheduler
 import os
 
 db = SQLAlchemy()
@@ -15,8 +16,13 @@ def create_app(config, create_logfiles=True):
     app.config.from_object(config)
     # SQLAlchemy
     db.init_app(app)
+    db.app = app
     # Setup navigation
     setup_navigation(app)
+    # Setup and start apscheduler
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
     # Register blueprints
     from .root.views import root, setup_error_routing
     from .api.views import api

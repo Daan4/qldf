@@ -47,3 +47,25 @@ RECORD_MODES = ['PQL Weapons',
                 'VQL Strafe',
                 'VQ3',
                 'CPM']
+
+# syncore api urls
+SYNCORE_SERVERS_URL = 'https://ql.syncore.org/api/servers'
+SYNCORE_QUERY_URL = 'https://ql.syncore.org/api/query'
+SYNCORE_SERVERIDS_URL = 'https://ql.syncore.org/api/serverIDs'
+
+# Redis url
+REDIS_HOST = c.REDIS_HOST
+REDIS_PORT = c.REDIS_PORT
+REDIS_DB = c.REDIS_DB
+REDIS_PASSWORD = c.REDIS_PASSWORD
+
+# APScheduler tasks
+SCHEDULER_API_ENABLED = True
+JOBS = [
+    {
+        'id': 'update_servers',
+        'func': 'qldf.tasks:update_servers',
+        'trigger': 'interval',
+        'seconds': 1
+    }
+]

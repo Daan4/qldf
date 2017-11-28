@@ -44,3 +44,30 @@ RECORD_MODES = ['PQL Weapons',
                 'VQL Strafe',
                 'VQ3',
                 'CPM']
+
+# syncore api urls
+SYNCORE_SERVERS_URL = 'https://ql.syncore.org/api/servers'
+SYNCORE_QUERY_URL = 'https://ql.syncore.org/api/query'
+SYNCORE_SERVERIDS_URL = 'https://ql.syncore.org/api/serverIDs'
+
+# Scheduled task intervals in seconds
+UPDATE_SERVERS_INTERVAL = 120
+UPDATE_MAPS_INTERVAL = 3600
+UPDATE_PLAYERS_INTERVAL = 3600
+
+# Redis url
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+REDIS_DB = os.environ.get('REDIS_DB')
+REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
+
+# APScheduler tasks
+SCHEDULER_API_ENABLED = True
+JOBS = [
+    {
+        'id': 'update_servers',
+        'func': 'qldf.tasks:update_servers',
+        'trigger': 'interval',
+        'seconds': 1
+    }
+]
