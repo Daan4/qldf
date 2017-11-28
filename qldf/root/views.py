@@ -7,7 +7,7 @@ from qldf import db
 from functools import wraps
 import json
 
-root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', static_folder='static')
+root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', static_folder='static', static_url_path='root/static')
 
 
 def search_form(wrapped_function, *args, **kwargs):
