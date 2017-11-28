@@ -66,6 +66,6 @@ JOBS = [
         'id': 'update_servers',
         'func': 'qldf.tasks:update_servers',
         'trigger': 'interval',
-        'seconds': 1
+        'seconds': c.UPDATE_SERVERS_INTERVAL
     }
 ]
