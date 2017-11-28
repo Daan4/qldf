@@ -56,8 +56,9 @@ class BaseModel(db.Model):
 class Player(BaseModel):
     __tablename__ = 'player'
     name = db.Column(db.Text, nullable=False)
-    steam_id = db.Column(db.Text, unique=True, nullable=False)
+    steam_id = db.Column(db.Text, unique=True, nullable=False, index=True)
     records = db.relationship('Record', backref='player', lazy=True)
+    avatar_url = db.Column(db.Text)
 
     def __repr__(self):
         return f'<Player {self.id}>'
@@ -88,7 +89,7 @@ class Map(BaseModel):
 
 class WorkshopItem(BaseModel):
     __tablename__ = 'workshop_item'
-    item_id = db.Column(db.Text, unique=True, nullable=False)
+    item_id = db.Column(db.Text, unique=True, nullable=False, index=True)
     name = db.Column(db.Text)
     author_steam_id = db.Column(db.Text)
     description = db.Column(db.Text)
@@ -106,7 +107,7 @@ class WorkshopItem(BaseModel):
 
 class Server(BaseModel):
     __tablename__ = 'server'
-    server_id = db.Column(db.Integer, unique=True, nullable=False)
+    server_id = db.Column(db.Integer, unique=True, nullable=False, index=True)
     address = db.Column(db.Text)
     country = db.Column(db.Text)
     map = db.Column(db.Text)
