@@ -9,7 +9,7 @@ response = ''
 while response.lower() not in ('y', 'n'):
     response = input('Are you sure you want to drop all database tables? y/n\n')
 if response.lower() == 'y':
-    app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
+    app = create_app('config.scripts_config')
     with app.app_context():
         db.reflect()
         db.drop_all()

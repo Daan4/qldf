@@ -9,7 +9,7 @@ response = ''
 while response.lower() not in ('y', 'n'):
     response = input('Are you sure you want to delete all table rows? y/n\n')
 if response.lower() == 'y':
-    app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
+    app = create_app('config.scripts_config')
     with app.app_context():
         from qldf.models import Map, Player, Record, WorkshopItem
 

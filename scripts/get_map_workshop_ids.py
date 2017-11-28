@@ -32,7 +32,7 @@ if len(sys.argv) >= 2 and sys.argv[1] == 'fromcache':
     maps = {_map: None for _map in maps}
 else:
     # Otherwise load maps from the database
-    app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
+    app = create_app('config.scripts_config')
     with app.app_context():
         from qldf.models import Map
         map_rows = db.session.query(Map).all()

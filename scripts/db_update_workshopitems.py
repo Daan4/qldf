@@ -40,7 +40,7 @@ if len(sys.argv) >= 2 and sys.argv[1] == 'fromcache':
     except FileNotFoundError:
         pass
 
-app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
+app = create_app('config.scripts_config')
 
 if fromcache:
     for _id, values_dict in workshop_items.items():

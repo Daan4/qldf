@@ -24,7 +24,7 @@ mapids_cache_filepath = os.path.join(scripts_dir, 'tmp/map_ids.json')
 
 
 # When deploying on heroku, limit the number of data rows. Max 10k rows allowed for free.
-if os.environ.get('QLDF_CONFIG', 'config.config') == 'config.heroku_config':
+if 'config.scripts_config' == 'config.heroku_config':
     map_limit = heroku_config.MAP_LIMIT
 else:
     map_limit = None
@@ -102,7 +102,7 @@ if not maps_with_workshop_ids:
     maps_with_workshop_ids = get_data_from_cache(mapids_cache_filepath)
 
 # Insert data into database
-app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
+app = create_app('config.scripts_config')
 with app.app_context():
     # Insert the workshop items into the database
     print('DB: inserting workshop items')

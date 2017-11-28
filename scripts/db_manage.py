@@ -13,7 +13,7 @@ from qldf import db, create_app
 # db upgrade [<revision>] : upgrade database to revision
 # db downgrade [<revision>] : downgrade database to revision
 
-app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'))
+app = create_app('config.scripts_config')
 
 # setup Flask-Migrate
 migrate = Migrate(app, db, directory=os.path.abspath('migrations'))

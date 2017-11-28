@@ -59,6 +59,7 @@ RECORD_MODES = ['PQL Weapons',
 SYNCORE_SERVERS_URL = 'https://ql.syncore.org/api/servers'
 
 # APScheduler tasks
+RUN_TASKS_ON_STARTUP = True
 SCHEDULER_API_ENABLED = True
 JOBS = [
     {
@@ -66,6 +67,12 @@ JOBS = [
         'func': 'qldf.tasks:update_servers',
         'trigger': 'interval',
         'seconds': c.UPDATE_SERVERS_INTERVAL
+    },
+    {
+        'id': 'update_player',
+        'func': 'qldf.tasks:update_players',
+        'trigger': 'interval',
+        'seconds': c.UPDATE_PLAYERS_INTERVAL
     }
 ]
 
