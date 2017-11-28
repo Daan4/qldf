@@ -34,7 +34,7 @@
             </li>
         {% endfor %}
     </ul>
-    {% from "macros.html" import render_form %}
+    {% from "macros.j2" import render_form %}
     {% if g.search_form %}
     {{ render_form(g.search_form) }}
     {% endif %}

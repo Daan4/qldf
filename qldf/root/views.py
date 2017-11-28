@@ -11,7 +11,7 @@ root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', 
 
 
 def search_form(wrapped_function, *args, **kwargs):
-    """To be used on every routing function that extends base.html to handle the search form in the page header.
+    """To be used on every routing function that extends base.j2 to handle the search form in the page header.
     Requires methods GET and POST enabled"""
     @wraps(wrapped_function)
     def wrapper(*args, **kwargs):
@@ -65,7 +65,7 @@ def index():
                                    Map.date_created).\
         order_by(desc(Map.date_created)).\
         limit(current_app.config['NUM_RECENT_MAPS'])
-    return render_template('index.html',
+    return render_template('index.j2',
                            recent_records=recent_records,
                            recent_world_records=recent_world_records,
                            recent_maps=recent_maps)
@@ -121,7 +121,7 @@ def servers():
             if wr.map_name == _server.map:
                 world_records[_server.server_id].append(wr)
 
-    return render_template('servers.html',
+    return render_template('servers.j2',
                            servers=_servers,
                            players=players,
                            world_records=world_records)
@@ -163,7 +163,7 @@ def player(page, steam_id, sortby, sortdir):
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     name = pagination.items[0].player_name
-    return render_template('player.html',
+    return render_template('player.j2',
                            title=steam_id,
                            name=name,
                            steam_id=steam_id,
@@ -214,7 +214,7 @@ def players(page, sortby, sortdir):
         join(sq3, sq3.c.id == Player.id).\
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
-    return render_template('players.html',
+    return render_template('players.j2',
                            title='Players',
                            pagination=pagination,
                            sortdir=sortdir.__name__,
@@ -244,7 +244,7 @@ def records(page, sortby, sortdir):
         join(Player, Map).\
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
-    return render_template('records.html',
+    return render_template('records.j2',
                            title='Records',
                            pagination=pagination,
                            sortdir=sortdir.__name__,
@@ -292,7 +292,7 @@ def _map(page, name, sortby, sortdir):
         filter(Map.name == name).\
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
-    return render_template('map.html',
+    return render_template('map.j2',
                            title=name,
                            name=name,
                            pagination=pagination,
@@ -321,7 +321,7 @@ def maps(page, sortby, sortdir):
         group_by(Map.id, WorkshopItem.item_id).\
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
-    return render_template('maps.html',
+    return render_template('maps.j2',
                            title='Maps',
                            pagination=pagination,
                            sortdir=sortdir.__name__,
@@ -348,7 +348,7 @@ def search(page, search_string):
         filter(Map.name.ilike(f'%{search_string}%'))
     pagination = sq.union(sq2).\
         paginate(page, current_app.config['SEARCH_RESULTS_PER_PAGE'], True)
-    return render_template('search.html',
+    return render_template('search.j2',
                            title='Search',
                            pagination=pagination,
                            search_string=search_string)
@@ -383,7 +383,7 @@ def setup_error_routing(app):
             redirect_url = session['previous_page']
         except KeyError:
             redirect_url = url_for('root.index')
-        return render_template('404.html', title='404', redirect_url=redirect_url), 404
+        return render_template('404.j2', title='404', redirect_url=redirect_url), 404
 
     @app.errorhandler(500)
     def internal_error(error):
@@ -391,4 +391,4 @@ def setup_error_routing(app):
             redirect_url = session['previous_page']
         except KeyError:
             redirect_url = url_for('root.index')
-        return render_template('500.html', title='500', redirect_url=redirect_url), 500
+        return render_template('500.j2', title='500', redirect_url=redirect_url), 500
