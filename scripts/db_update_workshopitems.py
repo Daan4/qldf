@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from datetime import datetime, timedelta
 sys.path.insert(0, os.path.abspath('..'))
 from qldf import db, create_app
-from qldf.models import WorkshopItem
+from qldf.root.models import WorkshopItem
 
 
 # Append the workshop item id

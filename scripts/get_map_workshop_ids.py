@@ -31,7 +31,7 @@ else:
     # Otherwise load maps from the database
     app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
     with app.app_context():
-        from qldf.models import Map
+        from qldf.root.models import Map
         map_rows = db.session.query(Map).all()
         maps = {row.name: int(row.workshop_item_id) for row in map_rows}
 for _map, workshop_id in maps.items():

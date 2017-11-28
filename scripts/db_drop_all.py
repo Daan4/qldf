@@ -10,7 +10,7 @@ while response.lower() not in ('y', 'n'):
 if response.lower() == 'y':
     app = create_app(os.environ.get('QLDF_CONFIG', 'config.config'), create_logfiles=False)
     with app.app_context():
-        from qldf.models import Map, Player, Record
+        from qldf.root.models import Map, Player, Record
         db.reflect()
         db.drop_all()
         db.session.commit()
