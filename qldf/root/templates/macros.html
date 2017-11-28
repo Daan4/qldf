@@ -3,7 +3,7 @@
         <dt>{{ field.label }}
         <dd>{{ field(**kwargs) }}
         {% if field.errors %}
-        <ul class=errors>
+        <ul>
             {% for error in field.errors %}
                 <li>{{ error }}</li>
             {% endfor %}
@@ -14,7 +14,7 @@
 {% endmacro %}
 
 {% macro render_form(form) %}
-    <form action="" method="post" name="{{ form.name }}" id="form">
+    <form action="" method="post" name="{{ form.name }}">
         {{ form.hidden_tag() }}
         {% for field in form %}
             {{ render_field(field) }}

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='icon.ico') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('root.static', filename='icon.ico') }}">
     <meta charset="UTF-8">
     {% if title %}
     <title>{{ title }} - www.qldf.com</title>
@@ -28,17 +27,10 @@
     </script>
 </head>
 <body onload="startTime()">
-    <ul class="navigation_bar">
+    <ul>
         {% for item in nav.main %}
-            <li class="menu_item">
-                <a class="{% if item.is_active %}
-                          active_menu_item
-                          {% else %}
-                          menu_item
-                          {% endif %}"
-                href="{{ item.url }}">
-                    {{ item.label }}
-                </a>
+            <li>
+                <a href="{{ item.url }}">{{ item.label }}</a>
             </li>
         {% endfor %}
     </ul>
@@ -49,15 +41,15 @@
     <br><hr>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul id="flash_list">
+            <ul>
                 {% for message in messages %}
-                <li><div class="flash">>{{ message }}<</div></li>
+                <li><div>{{ message }}<</div></li>
                 {% endfor %}
             </ul>
         {% endif %}
     {% endwith %}
-    <div id="page_content">{% block content %}{% endblock %}</div>
-    <div id="footer"><hr>© Daan Lubbers 2017. <a class="footer" href="https://www.github.com/daan4/qldf">GitHub Repository</a>. Rendered by <a class="footer" href="http://flask.pocoo.org/">Flask</a> in __EXECUTION_TIME__. <span id="digital_clock"></span><br/>
-        Inspired by <a class="footer" href="https://qlrace.com">qlrace.com</a>, <a class="footer" href="https://q3df.org">q3df.org</a> and <a class="footer" href="https://reflexrace.github.io">reflexrace.github.io</a> . </div>
+    <div>{% block content %}{% endblock %}</div>
+    <div><hr>© Daan Lubbers 2017. <a href="https://www.github.com/daan4/qldf">GitHub Repository</a>. Rendered by <a href="http://flask.pocoo.org/">Flask</a> in __EXECUTION_TIME__.<br/>
+        Inspired by <a href="https://qlrace.com">qlrace.com</a>, <a href="https://q3df.org">q3df.org</a> and <a href="https://reflexrace.github.io">reflexrace.github.io</a> . </div>
 </body>
 </html>
