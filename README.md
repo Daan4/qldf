@@ -13,45 +13,47 @@ pip install -r requirements.txt
 
 2. Customize local_config_sample.py and rename it to local_config.py
 
-3. Download and install postgres v10.1+, then create the qldf database.
+3. Download and install postgres v10.x, then create the qldf database.
 
 Run from "..\PostgreSQL\10\bin":
 ```
 createdb -U postgres -T template0 -E utf-8 -l american_usa qldf
 ```
 
-4. Create database tables.
+4. Create database tables and populate with test data.
 
 Run from \scripts in the virtualenv:
 ```
-db_create
+python scripts\db_create.py
+python scripts\db_populate.py
+
 ```
 
 5. Setup database migration directory.
 
-Run from \scripts in the virtualenv:
+Run in the virtualenv:
 ```
-db_manage db init
+python scripts\db_manage.py db init
 ```
 
 # Generate requirements.txt
-Run from virtualenv:
+Run in the virtualenv:
 ```
 pip freeze > requirements.txt
 ```
 
-# Update the database
+# Update the database schema
 Whenever changes are made to database models in any models.py file run the following to update the database.
 
-Run from \scripts in the virtualenv:
+Run in the virtualenv:
 ```
-db_manage db migrate
-db_manage db upgrade
+python scripts\db_manage.py db migrate
+python scripts\db_manage.py db upgrade
 ```
 
 To revert changes:
 ```
-db_manage db downgrade
+python scripts\db_manage.py db downgrade
 ```
 
 # Deploying on Heroku
@@ -65,7 +67,7 @@ PORT = 5000
 SECRET_KEY = yoursupersecretkey
 ```
 
-Run the deploy_heroku script to create and populate the database with test data.
+Create the database tables.
 
 Other scripts can be ran in a similar way.
 ```
