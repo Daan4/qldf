@@ -85,6 +85,10 @@ def servers():
             players[server.server_id].append({'name': _player['name'],
                                               'score': _player['score'],
                                               'totalConnected': _player['totalConnected']})
+            # Sort players by fastest time
+            players[server.server_id] = sorted(players[server.server_id], key=lambda k: k['score'])
+    # Sort servers by playercount
+    _servers = sorted(_servers, key=lambda k: len(players[k.server_id]), reverse=True)
     return render_template('servers.html',
                            servers=_servers,
                            players=players)
