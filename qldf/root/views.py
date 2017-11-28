@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, session, url_for, g, request, current_app, redirect
 from time import time
-from .models import Player, Record, Map, WorkshopItem
+from .models import Player, Record, Map, WorkshopItem, Server
 from .forms import SearchForm
 from sqlalchemy import func, desc, asc, literal
 from qldf import db
 from functools import wraps
+import json
 
 root = Blueprint('root', __name__, url_prefix='/', template_folder='templates', static_folder='static')
 
@@ -73,7 +74,20 @@ def index():
 @root.route('servers/', methods=['GET', 'POST'])
 @search_form
 def servers():
-    return render_template('servers.html')
+    """Show server list"""
+    _servers = db.session.query(Server).all()
+    # Parse players json
+    players = {}
+    for server in _servers:
+        db_players = json.loads(server.players)
+        players[server.server_id] = []
+        for _player in db_players:
+            players[server.server_id].append({'name': _player['name'],
+                                              'score': _player['score'],
+                                              'totalConnected': _player['totalConnected']})
+    return render_template('servers.html',
+                           servers=_servers,
+                           players=players)
 
 
 @root.route('player/<string:steam_id>/', defaults={'page': 1, 'sortby': 'date', 'sortdir': 'desc'}, methods=['GET', 'POST'])

@@ -1,4 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
-    Servers
+Server browser
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Ip</th>
+        <th>Country</th>
+        <th>Map</th>
+        <th>Playercount</th>
+        <th>Players</th>
+        <th>Tags</th>
+        <th>Last refresh</th>
+    </tr>
+    {% for server in servers %}
+    <tr>
+        <td>{{ server.name }}</td>
+        <td>{{ server.address }}</td>
+        <td>{{ server.country }}</td>
+        <td>{{ server.map | format_map_name }}</td>
+        <td>{{ players[server.server_id] | length }}/{{ server.max_players }}</td>
+        <td>{{ players[server.server_id] | format_players }}</td>
+        <td>{{ server.keywords }}</td>
+        <td>{{ server.date_modified | format_record_date}}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

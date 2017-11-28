@@ -7,8 +7,8 @@ from sqlalchemy.orm.exc import UnmappedInstanceError
 class BaseModel(db.Model):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True, index=True)
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp().op('AT TIME ZONE')('UTC'))
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp().op('AT TIME ZONE')('UTC'), onupdate=db.func.current_timestamp())
 
     @classmethod
     def create(cls, success_msg=None, failure_msg=None, **kwargs):
@@ -90,3 +90,23 @@ class WorkshopItem(BaseModel):
 
     def __repr__(self):
         return f'<WorkshopItem {self.id}>'
+
+
+class Server(BaseModel):
+    __tablename__ = 'server'
+    server_id = db.Column(db.Integer, unique=True, nullable=False)
+    address = db.Column(db.Text)
+    country = db.Column(db.Text)
+    map = db.Column(db.Text)
+    max_players = db.Column(db.Integer)
+    name = db.Column(db.Text)
+    """ JSON blob with player information
+    players format (1 dict per player):
+    [{name: string, score: int, totalConnected:string}]
+    """
+    players = db.Column(db.Text)
+    # comma delimited string with server tags
+    keywords = db.Column(db.Text)
+
+    def __repr__(self):
+        return f'<Server {self.id}>'

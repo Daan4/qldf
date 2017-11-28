@@ -14,6 +14,26 @@ def setup_custom_jinja_filters(app):
     app.jinja_env.filters['format_workshop_url'] = format_workshop_url
     app.jinja_env.filters['format_profile_url'] = format_profile_url
     app.jinja_env.filters['print_newlines'] = print_newlines
+    app.jinja_env.filters['format_players'] = format_players
+
+
+def format_players(players):
+    """Format list of players dicts as html
+    input format:
+    [{name: <string>, score: <int>, totalconnected: <string>}], 1 dict per player"""
+    if players:
+        html_output = '<table><tr><th>Name</th><th>Time</th><th>Connected for</th></tr>'
+        for player in players:
+            # format time
+            if player['score'] == 2147483647:
+                player['score'] = '-'
+            else:
+                player['score'] = format_record_time(player['score'])
+            html_output += f"<tr><td>{player['name']}</td><td>{player['score']}</td><td>{player['totalConnected']}</td></tr>"
+        html_output += '</table>'
+    else:
+        html_output = ''
+    return do_mark_safe(html_output)
 
 
 def format_record_mode(mode):
@@ -61,6 +81,11 @@ def format_profile_url(steam_id):
 def format_player_name(name, steam_id):
     """Turn a player name into a url to /player/<steam_id>"""
     return do_mark_safe(f"<a href=\"{url_for('root.player', steam_id=steam_id)}\">{name}</a>")
+
+
+def format_colored_player_name(name):
+    """Turn a name with quake colors (^1) to a html colored name"""
+    pass
 
 
 def format_map_name(name):
