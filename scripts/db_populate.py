@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 import sys
 import os
 sys.path.insert(0, os.path.abspath('..'))
-from qldf.root.models import Record, Player, Map, WorkshopItem
+from qldf.root.models import Record, Player, Map, WorkshopItem, Server
 from qldf import create_app, db
 import json
 import os
