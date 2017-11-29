@@ -61,7 +61,7 @@ RECORD_MODES = ['PQL Weapons',
 SYNCORE_SERVERS_URL = 'https://ql.syncore.org/api/servers'
 
 # APScheduler tasks
-RUN_TASKS_ON_STARTUP = True
+RUN_TASKS_ON_STARTUP = c.RUN_TASKS_ON_STARTUP
 SCHEDULER_API_ENABLED = True
 JOBS = [
     {
