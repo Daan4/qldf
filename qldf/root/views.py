@@ -155,6 +155,8 @@ def player(page, steam_id, sortby, sortdir):
     pagination = db.session.query(Player.id,
                                   Player.steam_id,
                                   Player.name.label('player_name'),
+                                  Player.date_modified,
+                                  Player.avatar_url,
                                   sq.c.mode.label('mode'),
                                   sq.c.time.label('time'),
                                   sq.c.date.label('date'),
@@ -165,10 +167,14 @@ def player(page, steam_id, sortby, sortdir):
         order_by(sortdir(sortby)).\
         paginate(page, current_app.config['ROWS_PER_PAGE'], True)
     name = pagination.items[0].player_name
+    avatar_url = pagination.items[0].avatar_url
+    date_modified = pagination.items[0].date_modified
     return render_template('player.j2',
                            title=steam_id,
                            name=name,
                            steam_id=steam_id,
+                           avatar_url=avatar_url,
+                           date_modified=date_modified,
                            pagination=pagination,
                            sortdir=sortdir.__name__,
                            reverse_sortdir_on=sortby)

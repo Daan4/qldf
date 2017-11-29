@@ -2,6 +2,8 @@
 {% block content %}
 {{ name }}<br/>
 Steam Profile: {{ steam_id | format_profile_url }}<br/>
+Steam Avatar: <img src="{{ avatar_url }}"/><br/>
+Name and avatar last updated on: {{ date_modified | format_record_date }} <br/>
 Records
 <table>
     <tr>
