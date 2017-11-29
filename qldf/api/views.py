@@ -14,7 +14,7 @@ def object_as_dict(obj):
 
 @api.route('docs/')
 def docs():
-    return render_template('docs.html')
+    return render_template('docs.j2')
 
 
 @api.route('maps/')
