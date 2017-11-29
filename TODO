@@ -2,6 +2,8 @@
 
 show local times
 
+https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xiii-dates-and-times
+
 db performance: caching and indexing
 
 implement api
@@ -19,3 +21,24 @@ Admin panel to flag cheated times and manually add workshop item ids
 
 Add player avatar to playeroverview
 Add last updated on times to relevant views
+
+parse bsp files like ws does -> read ent data from bsp
+http://www.mralligator.com/q3/#Entities
+
+tagging system
+
+in-game management of database
+
+support team race mode
+
+test effect of update workshop items when the workshop item was removed from steam
+
+logging appears to not be working
+
+todo write task functions in such a way that i get notified when the soups need updating
+
+some xml parse error in update players
+
+some urlopen winerror in update workshop items
+
+last updated on for some workshopitems is none? how?
