@@ -13,6 +13,7 @@ Workshop item comment count: {{ map_data.num_comments }}<br/>
 Workshop item rating: {{ map_data.score }}<br/>
 Workshop item rating count: {{ map_data.num_scores }}<br/>
 Workshop item preview image: <img src="{{ map_data.preview_url }}"/><br/>
+Workshop item information last updated on: {{ map_data.date_modified | format_record_date }}<br/>
 {% endif %}
 Records
 <table>

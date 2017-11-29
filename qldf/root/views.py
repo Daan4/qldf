@@ -282,7 +282,8 @@ def _map(page, name, sortby, sortdir):
                                 WorkshopItem.num_comments,
                                 WorkshopItem.score,
                                 WorkshopItem.num_scores,
-                                WorkshopItem.preview_url).\
+                                WorkshopItem.preview_url,
+                                WorkshopItem.date_modified.label('date_modified')).\
         outerjoin(WorkshopItem).\
         filter(Map.name == name).\
         first()
