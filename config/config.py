@@ -46,6 +46,8 @@ NUM_RECENT_WORLD_RECORDS = 25
 STEAMWORKSHOP_ITEM_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id="
 # Append player steamID64
 STEAMPLAYER_PROFILE_URL = "https://steamcommunity.com/profiles/"
+# Append search string
+STEAMWORKSHOP_SEARCH_URL = 'https://steamcommunity.com/workshop/browse/?appid=282440&searchtext='
 
 # Record physics modes
 RECORD_MODES = ['PQL Weapons',
@@ -73,6 +75,12 @@ JOBS = [
         'func': 'qldf.tasks:update_players',
         'trigger': 'interval',
         'seconds': c.UPDATE_PLAYERS_INTERVAL
+    },
+    {
+        'id': 'update_workshop_items',
+        'func': 'qldf.tasks:update_workshop_items',
+        'trigger': 'interval',
+        'seconds': c.UPDATE_WORKSHOPITEMS_INTERVAL
     }
 ]
 
