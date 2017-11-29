@@ -4,6 +4,8 @@ from flask_apscheduler import APScheduler
 from flask_navigation import Navigation
 from flask_sqlalchemy import SQLAlchemy
 
+from importlib import import_module
+
 from qldf.root.filters import setup_custom_jinja_filters
 
 db = SQLAlchemy()
@@ -23,10 +25,12 @@ def create_app(config):
     setup_navigation(app)
     # Run tasks on startup if needed
     if app.config['RUN_TASKS_ON_STARTUP']:
-        from qldf.tasks import update_servers, update_players, update_workshop_items
-        update_players()
-        #update_workshop_items()
-        #update_servers()
+        for task in app.config['JOBS']:
+            task_import_name = task['func'].split(':')[0]
+            task_func_name = task['func'].split(':')[1]
+            task_import = import_module(task_import_name)
+            task_function = getattr(task_import, task_func_name)
+            task_function()
     # Setup and start apscheduler
     scheduler = APScheduler()
     scheduler.init_app(app)
