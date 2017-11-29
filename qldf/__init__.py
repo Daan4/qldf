@@ -18,6 +18,8 @@ def create_app(config):
     from flask import Flask
     app = Flask(__name__)
     app.config.from_object(config)
+    # Setup logging
+    setup_logging(app)
     # SQLAlchemy
     db.init_app(app)
     db.app = app
@@ -42,8 +44,6 @@ def create_app(config):
     app.register_blueprint(root)
     # Setup routing for html error pages
     setup_error_routing(app)
-    # Setup logging
-    setup_logging(app)
     # Setup custom jinja filters
     setup_custom_jinja_filters(app)
     return app
